@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { addUser } from '../../../store/ducks/user/slice';
-import { Button, Input } from '../../../ui';
-import { LoginContainer, LoginTitle, LoginForm } from './styles';
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { addUser } from "../../../store";
+
+import { Button, Input } from "../../../ui";
+import { LoginContainer, LoginTitle, LoginForm } from "./styles";
 
 export const Login: React.FC = () => {
   const dispatch = useDispatch();
@@ -12,7 +13,7 @@ export const Login: React.FC = () => {
   const handleAddUser: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
 
-    if (inputValue) dispatch(addUser({ name: inputValue }));
+    dispatch(addUser({ name: inputValue }));
   }
 
   return (

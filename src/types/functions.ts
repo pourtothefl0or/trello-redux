@@ -1,9 +1,3 @@
-import { IColumn } from "./interfaces";
-
-export interface ColumnFunctions {
-  editColumn: (values: IColumn) => void;
-}
-
 export interface CardFunctions {
   onCardClick: (id: number) => void;
   onAddCardClick: () => void;

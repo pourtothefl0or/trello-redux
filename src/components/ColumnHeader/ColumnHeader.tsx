@@ -1,24 +1,27 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useToggle } from '../../customHooks';
-import { ColumnFunctions } from '../../types/functions';
-import { IColumn } from '../../types/interfaces';
+import { editColumn } from '../../store';
+import { IColumn } from '../../store/ducks/columns/types';
+
 import { ButtonClose, PopupMore, PopupMoreItem } from '../../ui';
 import { StyledColumnHeader, TitleInner, Title, CardsSum, ColumnForm, InputTitleLabel, InputTitle } from './styles';
 
-interface ColumnProps extends ColumnFunctions {
+interface ColumnProps {
   column: IColumn;
   cardsSum: number;
 }
 
-export const ColumnHeader: React.FC<ColumnProps> = ({ column, cardsSum, ...props }) => {
+export const ColumnHeader: React.FC<ColumnProps> = ({ column, cardsSum }) => {
+  const dispatch = useDispatch();
+
   const [inputValue, setInputValue] = useState('');
   const [isEditMode, toggleIsEditMode] = useToggle(false);
 
   const handleEditColumn: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
 
-    if (inputValue) props.editColumn({ id: column.id, column: inputValue });
-
+    dispatch(editColumn(({ id: column.id, column: inputValue })));
     toggleIsEditMode();
   };
 

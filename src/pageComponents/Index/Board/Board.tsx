@@ -1,25 +1,18 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { ICard, IColumn, IComment } from '../../../types/interfaces';
-import { useLocalStorage, useToggle } from '../../../customHooks';
-import { selectUser } from '../../../store/ducks/user/selector';
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import { ICard, IColumn, IComment } from "../../../types/interfaces";
+import { useLocalStorage, useToggle } from "../../../customHooks";
+import { selectUser, selectColumns } from "../../../store";
 
-import { Column, CommentsList } from '../../../components';
-import { Input, Modal, Textarea } from '../../../ui';
-import { StyledBoard, BoardContainer, CardInfo, CardInfoTitle, CardForm, CardFormButton, CardInfoItem } from './styles';
+import { Column, CommentsList } from "../../../components";
+import { Input, Modal, Textarea } from "../../../ui";
+import { StyledBoard, BoardContainer, CardInfo, CardInfoTitle, CardForm, CardFormButton, CardInfoItem } from "./styles";
 
 export const Board: React.FC = () => {
-  const user =  useSelector(selectUser);
-
   // arrays
-  const defaultColumnsArr: IColumn[] = [
-    { id: 1, column: 'To Do' },
-    { id: 2, column: 'In progress' },
-    { id: 3, column: 'Testing' },
-    { id: 4, column: 'Done' },
-  ];
+  const user =  useSelector(selectUser);
+  const columns =  useSelector(selectColumns);
 
-  const [columns, setColumns] = useLocalStorage(defaultColumnsArr, 'columns');
   const [cards, setCards] = useLocalStorage([], 'cards');
   const [comments, setComments] = useLocalStorage([], 'comments');
 
@@ -37,18 +30,6 @@ export const Board: React.FC = () => {
   const clearFormFields = () => {
     setInputValue('');
     setTextareaValue('');
-  };
-
-  // columns
-  const editColumn = (values: IColumn) => {
-    const columnDuplicate = [...columns];
-    const findColumnItem = columnDuplicate.find((column: IColumn) => column.id === values.id);
-
-    if (findColumnItem) {
-      findColumnItem.column = values.column;
-
-      setColumns(columnDuplicate);
-    }
   };
 
   // cards
@@ -152,11 +133,10 @@ export const Board: React.FC = () => {
       <StyledBoard>
         <BoardContainer>
           {
-            columns.map((column: IColumn) =>
+            columns.map(column =>
               <Column
                 key={column.id}
                 column={column}
-                editColumn={editColumn}
                 comments={comments}
                 cards={cards.filter((card: ICard) => card.columnId === column.id)}
                 onCardClick={onCardClick}
