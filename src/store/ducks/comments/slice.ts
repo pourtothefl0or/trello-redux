@@ -1,5 +1,6 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { CommentsState, IComment } from "./types";
+import { createSlice } from '@reduxjs/toolkit';
+import { CommentsState } from './types';
+import { IComment } from '../../../types/interface';
 
 const initialState: CommentsState = {
   comments: []

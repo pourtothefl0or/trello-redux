@@ -1,5 +1,6 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { CardsState, ICard } from "./types";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { CardsState } from './types';
+import { ICard } from '../../../types/interface';
 
 const initialState: CardsState = {
   cards: []
@@ -9,13 +10,13 @@ const cardsSlice = createSlice({
   name: 'cards',
   initialState,
   reducers: {
-    addCard(state: any, action: any) {
-      if (action.payload.title) {
+    addCard(state, { payload }: PayloadAction<ICard>) {
+      if (payload.title) {
         state.cards.push({
-          id: Date.now(),
-          columnId: action.payload.columnId,
-          title: action.payload.title,
-          description: action.payload.description
+          id: payload.id,
+          columnId: payload.columnId,
+          title: payload.title,
+          description: payload.description
         });
       }
     },

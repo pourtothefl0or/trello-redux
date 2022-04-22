@@ -1,9 +1,4 @@
-export interface IComment {
-  id: number;
-  cardId: number;
-  userId: number;
-  comment: string;
-};
+import { IComment } from '../../../types/interface';
 
 export interface CommentsState {
   comments: IComment[];

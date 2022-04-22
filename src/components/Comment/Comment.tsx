@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useToggle } from '../../customHooks';
 import { useDispatch } from 'react-redux';
 import { deleteComment, editComment } from '../../store';
-import { IComment } from '../../store/ducks/comments/types';
+import { IComment } from '../../types/interface';
 import { PopupMoreItem, Button, Input } from '../../ui';
 import { StyledComment, CommentHeader, CommentUserLogo, CommentUserName, CommentPopupMore, CommentsText, CommentForm } from './styles';
 

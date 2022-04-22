@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { IComment } from '../../store/ducks/comments/types';
-import { IUser } from '../../store/ducks/user/types';
+import { IUser, IComment } from '../../types/interface';
 import { addComment } from '../../store';
 import { Comment } from '../';
 import { Textarea, Button } from '../../ui';

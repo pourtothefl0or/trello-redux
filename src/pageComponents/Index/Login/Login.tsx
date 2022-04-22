@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { addUser } from "../../../store";
-import { Button, Input } from "../../../ui";
-import { LoginContainer, LoginTitle, LoginForm } from "./styles";
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { addUser } from '../../../store';
+import { Button, Input } from '../../../ui';
+import { LoginContainer, LoginTitle, LoginForm } from './styles';
 
 export const Login: React.FC = () => {
   const dispatch = useDispatch();

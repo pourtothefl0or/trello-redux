@@ -1,13 +1,11 @@
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useToggle } from "../../../customHooks";
-import { ICard } from '../../../store/ducks/cards/types';
-import { IColumn } from "../../../store/ducks/columns/types";
-import { IComment } from "../../../store/ducks/comments/types";
-import { selectUser, selectColumns, selectCards, selectComments, addCard, editCard } from "../../../store";
-import { Column, CommentsList } from "../../../components";
-import { Input, Modal, Textarea } from "../../../ui";
-import { StyledBoard, BoardContainer, CardInfo, CardInfoTitle, CardForm, CardFormButton, CardInfoItem } from "./styles";
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useToggle } from '../../../customHooks';
+import { IColumn, ICard, IComment } from '../../../types/interface';
+import { selectUser, selectColumns, selectCards, selectComments, addCard, editCard } from '../../../store';
+import { Column, CommentsList } from '../../../components';
+import { Input, Modal, Textarea } from '../../../ui';
+import { StyledBoard, BoardContainer, CardInfo, CardInfoTitle, CardForm, CardFormButton, CardInfoItem } from './styles';
 
 export const Board: React.FC = () => {
   const dispatch = useDispatch();
@@ -44,6 +42,7 @@ export const Board: React.FC = () => {
     e.preventDefault();
 
     dispatch(addCard({
+      id: Date.now(),
       columnId: currentColumnId,
       title: inputValue,
       description: textareaValue

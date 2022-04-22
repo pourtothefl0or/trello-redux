@@ -1,7 +1,4 @@
-export interface IColumn {
-  id: number;
-  column: string;
-};
+import { IColumn } from '../../../types/interface';
 
 export interface ColumnsState {
   columns: IColumn[];

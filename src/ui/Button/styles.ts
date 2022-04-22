@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import { COLORS, PRIMARY } from "../../constants";
+import styled from 'styled-components';
+import { COLORS, PRIMARY } from '../../constants';
 
 export const StyledButton = styled.button`
   border-radius: ${PRIMARY.border};

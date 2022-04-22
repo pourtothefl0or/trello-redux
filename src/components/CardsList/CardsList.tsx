@@ -1,7 +1,6 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { ICard } from '../../store/ducks/cards/types';
-import { IComment } from '../../store/ducks/comments/types';
+import { ICard, IComment } from '../../types/interface';
 import { deleteCard } from '../../store';
 import { Card } from '../';
 import { CardAdd } from '../../ui';

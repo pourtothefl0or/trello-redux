@@ -1,7 +1,7 @@
-import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import { persistReducer, persistStore } from "redux-persist";
-import storage from "redux-persist/lib/storage";
-import { userReducer, columnsReducer, cardsReducer, commentsReducer } from "./ducks";
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import { persistReducer, persistStore } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import { userReducer, columnsReducer, cardsReducer, commentsReducer } from './ducks/';
 
 const rootReducer = combineReducers({
   user: userReducer,

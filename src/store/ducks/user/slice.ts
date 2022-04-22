@@ -1,5 +1,6 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { UserState } from "./types";
+import { createSlice } from '@reduxjs/toolkit';
+import { UserState } from './types';
+import { IUser } from '../../../types/interface';
 
 const initialState: UserState | any = {
   user: {}

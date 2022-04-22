@@ -1,7 +1,5 @@
 import React from 'react';
-import { IComment } from '../../store/ducks/comments/types';
-import { IColumn } from '../../store/ducks/columns/types';
-import { ICard } from '../../store/ducks/cards/types';
+import { IColumn, ICard, IComment } from '../../types/interface';
 import { ColumnHeader, CardsList } from '../';
 import { StyledColumn } from './styles';
 

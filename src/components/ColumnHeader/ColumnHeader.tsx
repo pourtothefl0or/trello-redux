@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useToggle } from '../../customHooks';
 import { useDispatch } from 'react-redux';
 import { editColumn } from '../../store';
-import { IColumn } from '../../store/ducks/columns/types';
+import { IColumn } from '../../types/interface';
 import { ButtonClose, PopupMore, PopupMoreItem } from '../../ui';
 import { StyledColumnHeader, TitleInner, Title, CardsSum, ColumnForm, InputTitleLabel, InputTitle } from './styles';
 

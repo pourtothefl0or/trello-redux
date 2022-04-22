@@ -2,13 +2,13 @@ export {
   userReducer,
   selectUser,
   addUser
-} from "./ducks";
+} from './ducks';
 
 export {
   columnsReducer,
   selectColumns,
   editColumn
-} from "./ducks";
+} from './ducks';
 
 export {
   cardsReducer,
@@ -16,7 +16,7 @@ export {
   addCard,
   editCard,
   deleteCard
-} from "./ducks";
+} from './ducks';
 
 export {
   commentsReducer,
@@ -24,4 +24,4 @@ export {
   addComment,
   editComment,
   deleteComment
-} from "./ducks";
+} from './ducks';
