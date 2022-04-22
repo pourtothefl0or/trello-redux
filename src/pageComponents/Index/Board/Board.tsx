@@ -3,6 +3,7 @@ import { ICard, IColumn, IComment, IUser } from '../../../types/interfaces';
 import { Column, CommentsList } from '../../../components';
 import { StyledBoard, BoardContainer, CardInfo, CardInfoTitle, CardForm, CardFormButton, CardInfoItem } from './styles';
 import { Input, Modal, Textarea } from '../../../ui';
+import { useToggle } from '../../../customHooks';
 
 interface BoardProps {
   user: IUser;
@@ -22,9 +23,9 @@ export const Board: React.FC<BoardProps> = (props) => {
   const [comments, setComments] = useState<IComment[]>(JSON.parse(localStorage.getItem('comments')!) || []);
 
   // modals
-  const [isModalInfoCard, setIsModalInfoCard] = useState(false);
-  const [isModalAddCard, setIsModalAddCard] = useState(false);
-  const [isModalEditCard, setIsModalEditCard] = useState(false);
+  const [isModalInfoCard, toggleIsModalInfoCard] = useToggle(false);
+  const [isModalAddCard, toggleIsModalAddCard] = useToggle(false);
+  const [isModalEditCard, toggleIsModalEditCard] = useToggle(false);
 
   // values
   const [currentCardId, setCurrentCardId] = useState(0);
@@ -53,12 +54,12 @@ export const Board: React.FC<BoardProps> = (props) => {
   // cards
   const onCardClick = (id: number) => {
     setCurrentCardId(id);
-    setIsModalInfoCard(!isModalInfoCard);
+    toggleIsModalInfoCard();
   }
 
   const onAddCardClick = (id: number) => {
     setCurrentColumnId(id);
-    setIsModalAddCard(!isModalAddCard);
+    toggleIsModalAddCard();
   }
 
   const handleAddCard: React.FormEventHandler<HTMLFormElement> = (e) => {
@@ -77,7 +78,7 @@ export const Board: React.FC<BoardProps> = (props) => {
       setCards(newCards);
       localStorage.setItem('cards', JSON.stringify(newCards));
 
-      setIsModalAddCard(!isModalAddCard);
+      toggleIsModalAddCard();
       clearFormFields();
     }
   };
@@ -85,7 +86,7 @@ export const Board: React.FC<BoardProps> = (props) => {
   const onEditCardClick = (id: number) => {
     setInputValue(cards.find((card: ICard) => card.id === id)?.title || '');
     setTextareaValue(cards.find((card: ICard) => card.id === id)?.description || '');
-    setIsModalEditCard(!isModalEditCard);
+    toggleIsModalEditCard();
   }
 
   const handleEditCard: React.FormEventHandler<HTMLFormElement> = (e) => {
@@ -101,7 +102,7 @@ export const Board: React.FC<BoardProps> = (props) => {
       setCards(cardsDuplicate);
       localStorage.setItem('cards', JSON.stringify(cardsDuplicate));
 
-      setIsModalEditCard(!isModalEditCard);
+      toggleIsModalEditCard();
       clearFormFields();
     }
   };
@@ -178,7 +179,7 @@ export const Board: React.FC<BoardProps> = (props) => {
       <Modal
         title="Card info"
         modalVisibility={isModalInfoCard}
-        onCloseClick={() => setIsModalInfoCard(!isModalInfoCard)}
+        onCloseClick={() => toggleIsModalInfoCard()}
       >
         {
           cards
@@ -220,7 +221,7 @@ export const Board: React.FC<BoardProps> = (props) => {
         title="Add card"
         modalVisibility={isModalAddCard}
         onCloseClick={() => {
-          setIsModalAddCard(!isModalAddCard);
+          toggleIsModalAddCard();
           clearFormFields();
         }}
       >
@@ -247,7 +248,7 @@ export const Board: React.FC<BoardProps> = (props) => {
         title="Edit card"
         modalVisibility={isModalEditCard}
         onCloseClick={() => {
-          setIsModalEditCard(!isModalEditCard)
+          toggleIsModalEditCard()
           clearFormFields();
         }}
       >
