@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useToggle } from '../../customHooks';
 import { ColumnFunctions } from '../../types/functions';
 import { IColumn } from '../../types/interfaces';
 import { ButtonClose, PopupMore, PopupMoreItem } from '../../ui';
@@ -11,14 +12,14 @@ interface ColumnProps extends ColumnFunctions {
 
 export const ColumnHeader: React.FC<ColumnProps> = ({ column, cardsSum, ...props }) => {
   const [inputValue, setInputValue] = useState('');
-  const [isEditMode, setIsEditMode] = useState(false);
+  const [isEditMode, toggleIsEditMode] = useToggle(false);
 
   const handleEditColumn: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
 
     if (inputValue) props.editColumn({ id: column.id, column: inputValue });
 
-    setIsEditMode(!isEditMode);
+    toggleIsEditMode();
   };
 
   return (
@@ -49,7 +50,7 @@ export const ColumnHeader: React.FC<ColumnProps> = ({ column, cardsSum, ...props
                 className="edit"
                 onClick={() => {
                   setInputValue(column.column);
-                  setIsEditMode(!isEditMode)}
+                  toggleIsEditMode()}
                 }
               >Edit</PopupMoreItem>
             </PopupMore>

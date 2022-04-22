@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { IUser } from '../types/interfaces';
 import { Board, Login } from '../pageComponents/Index';
+import { useLocalStorage } from '../customHooks';
 
 export const Index: React.FC = () => {
-  const [user, setUser] = useState<IUser>(JSON.parse(localStorage.getItem('user')!) || {});
+  const [user, setUser] = useLocalStorage({}, 'user');
 
   const onAddUser = (name: string) => {
     const newUser: IUser = { id: 1, name: name };
 
     setUser(newUser);
-    localStorage.setItem('user', JSON.stringify(newUser));
   }
 
   return (

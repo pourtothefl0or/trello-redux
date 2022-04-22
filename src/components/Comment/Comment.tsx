@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useToggle } from '../../customHooks';
 import { IComment } from '../../types/interfaces';
 import { PopupMoreItem, Button, Input } from '../../ui';
 import { StyledComment, CommentHeader, CommentUserLogo, CommentUserName, CommentPopupMore, CommentsText, CommentForm } from './styles';
@@ -11,7 +12,7 @@ interface CommentProps {
 }
 
 export const Comment: React.FC<CommentProps> = ({ name, comment, ...props}) => {
-  const [isEditMode, setIsEditMode] = useState(false);
+  const [isEditMode, toggleIsEditMode] = useToggle(false);
   const [inputValue, setInputValue] = useState('');
 
   const handleEditComment: React.FormEventHandler<HTMLFormElement> = (e) => {
@@ -19,7 +20,7 @@ export const Comment: React.FC<CommentProps> = ({ name, comment, ...props}) => {
 
     if (inputValue) props.editComment(comment.id, inputValue);
 
-    setIsEditMode(!isEditMode);
+    toggleIsEditMode();
     setInputValue('');
   };
 
@@ -33,7 +34,7 @@ export const Comment: React.FC<CommentProps> = ({ name, comment, ...props}) => {
           className="edit"
             onClick={() => {
               setInputValue(comment.comment);
-              setIsEditMode(!isEditMode);
+              toggleIsEditMode();
             }}
           >Edit</PopupMoreItem>
           <PopupMoreItem
