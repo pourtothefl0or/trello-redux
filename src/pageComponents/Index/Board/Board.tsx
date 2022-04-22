@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import { ICard, IColumn, IComment, IUser } from '../../../types/interfaces';
-import { Column, CommentsList } from '../../../components';
-import { StyledBoard, BoardContainer, CardInfo, CardInfoTitle, CardForm, CardFormButton, CardInfoItem } from './styles';
-import { Input, Modal, Textarea } from '../../../ui';
+import { useSelector } from 'react-redux';
+import { ICard, IColumn, IComment } from '../../../types/interfaces';
 import { useLocalStorage, useToggle } from '../../../customHooks';
+import { selectUser } from '../../../store/ducks/user/selector';
 
-interface BoardProps {
-  user: IUser;
-}
+import { Column, CommentsList } from '../../../components';
+import { Input, Modal, Textarea } from '../../../ui';
+import { StyledBoard, BoardContainer, CardInfo, CardInfoTitle, CardForm, CardFormButton, CardInfoItem } from './styles';
 
-export const Board: React.FC<BoardProps> = (props) => {
+export const Board: React.FC = () => {
+  const user =  useSelector(selectUser);
+
   // arrays
   const defaultColumnsArr: IColumn[] = [
     { id: 1, column: 'To Do' },
@@ -120,7 +121,7 @@ export const Board: React.FC<BoardProps> = (props) => {
     const newComment = {
       id: Date.now(),
       cardId: id,
-      userId: props.user.id,
+      userId: '',
       comment: comment
     };
 
@@ -193,12 +194,11 @@ export const Board: React.FC<BoardProps> = (props) => {
                   </CardInfoItem>
                   <CardInfoItem>
                     <CardInfoTitle>Author:</CardInfoTitle>
-                    <p>{props.user.name}</p>
+                    <p></p>
                   </CardInfoItem>
                 </CardInfo>
                 <CommentsList
                   comments={comments.filter((comment: IComment) => comment.cardId === card.id)}
-                  user={props.user}
                   cardId={card.id}
                   addComment={addComment}
                   editComment={editComment}

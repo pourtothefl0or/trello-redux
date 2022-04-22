@@ -1,8 +1,3 @@
-export interface IUser {
-  id: number;
-  name: string;
-};
-
 export interface IColumn {
   id: number;
   column: string;

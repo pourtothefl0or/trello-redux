@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IComment, IUser } from '../../types/interfaces';
+import { IComment } from '../../types/interfaces';
 import { CommentFunction } from '../../types/functions';
 import { Comment } from '../';
 import { Textarea, Button } from '../../ui';
@@ -7,11 +7,10 @@ import { StyledCommentsList, CommentItem, CommentForm } from './styles';
 
 interface CommentsListProps extends CommentFunction {
   comments: IComment[];
-  user: IUser;
   cardId: number;
 }
 
-export const CommentsList: React.FC<CommentsListProps> = ({ comments, user, ...props }) => {
+export const CommentsList: React.FC<CommentsListProps> = ({ comments, ...props }) => {
   const [textareaValue, setTextareaValue] = useState('');
 
   const handleAddComment: React.FormEventHandler<HTMLFormElement> = (e) => {
@@ -29,7 +28,7 @@ export const CommentsList: React.FC<CommentsListProps> = ({ comments, user, ...p
         comments.map((comment: IComment) =>
           <CommentItem key={comment.id}>
             <Comment
-              name={user.name}
+              name=""
               comment={comment}
               editComment={props.editComment}
               deleteComment={() => props.deleteComment(comment.id)}
