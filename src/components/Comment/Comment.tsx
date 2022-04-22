@@ -1,28 +1,39 @@
 import React, { useState } from 'react';
 import { useToggle } from '../../customHooks';
-import { IComment } from '../../types/interfaces';
+import { useDispatch } from 'react-redux';
+import { deleteComment, editComment } from '../../store';
+import { IComment } from '../../store/ducks/comments/types';
 import { PopupMoreItem, Button, Input } from '../../ui';
 import { StyledComment, CommentHeader, CommentUserLogo, CommentUserName, CommentPopupMore, CommentsText, CommentForm } from './styles';
 
 interface CommentProps {
   name: string | undefined;
   comment: IComment;
-  editComment: (id: number, comment: string) => void;
-  deleteComment: () => void;
 }
 
-export const Comment: React.FC<CommentProps> = ({ name, comment, ...props}) => {
+export const Comment: React.FC<CommentProps> = ({ name, comment, ...props }) => {
+  const dispatch = useDispatch();
+
   const [isEditMode, toggleIsEditMode] = useToggle(false);
   const [inputValue, setInputValue] = useState('');
+
+  const onEditClick = () => {
+    setInputValue(comment.comment);
+    toggleIsEditMode();
+  }
 
   const handleEditComment: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
 
-    if (inputValue) props.editComment(comment.id, inputValue);
-
+    dispatch(editComment({
+      id: comment.id,
+      comment: inputValue
+    }))
     toggleIsEditMode();
     setInputValue('');
   };
+
+  const onDeleteItemClick = (id: number) => dispatch(deleteComment({ id: id }))
 
   return (
     <StyledComment>
@@ -31,15 +42,12 @@ export const Comment: React.FC<CommentProps> = ({ name, comment, ...props}) => {
         <CommentUserName>{name}</CommentUserName>
         <CommentPopupMore>
           <PopupMoreItem
-          className="edit"
-            onClick={() => {
-              setInputValue(comment.comment);
-              toggleIsEditMode();
-            }}
+            className="edit"
+            onClick={onEditClick}
           >Edit</PopupMoreItem>
           <PopupMoreItem
             className="delete"
-            onClick={props.deleteComment}
+            onClick={() => onDeleteItemClick(comment.id)}
           >Delete</PopupMoreItem>
         </CommentPopupMore>
       </CommentHeader>

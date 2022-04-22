@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { useToggle } from '../../customHooks';
+import { useDispatch } from 'react-redux';
 import { editColumn } from '../../store';
 import { IColumn } from '../../store/ducks/columns/types';
-
 import { ButtonClose, PopupMore, PopupMoreItem } from '../../ui';
 import { StyledColumnHeader, TitleInner, Title, CardsSum, ColumnForm, InputTitleLabel, InputTitle } from './styles';
 

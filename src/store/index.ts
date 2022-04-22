@@ -17,3 +17,11 @@ export {
   editCard,
   deleteCard
 } from "./ducks";
+
+export {
+  commentsReducer,
+  selectComments,
+  addComment,
+  editComment,
+  deleteComment
+} from "./ducks";

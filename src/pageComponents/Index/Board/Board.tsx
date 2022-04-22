@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocalStorage, useToggle } from "../../../customHooks";
-import { IComment } from "../../../types/interfaces";
-
+import { useToggle } from "../../../customHooks";
 import { ICard } from '../../../store/ducks/cards/types';
 import { IColumn } from "../../../store/ducks/columns/types";
-import { selectUser, selectColumns, selectCards, addCard, editCard } from "../../../store";
-
+import { IComment } from "../../../store/ducks/comments/types";
+import { selectUser, selectColumns, selectCards, selectComments, addCard, editCard } from "../../../store";
 import { Column, CommentsList } from "../../../components";
 import { Input, Modal, Textarea } from "../../../ui";
 import { StyledBoard, BoardContainer, CardInfo, CardInfoTitle, CardForm, CardFormButton, CardInfoItem } from "./styles";
@@ -18,8 +16,7 @@ export const Board: React.FC = () => {
   const user =  useSelector(selectUser);
   const columns =  useSelector(selectColumns);
   const cards =  useSelector(selectCards);
-
-  const [comments, setComments] = useLocalStorage([], 'comments');
+  const comments =  useSelector(selectComments);
 
   // modals
   const [isModalAddCard, toggleIsModalAddCard] = useToggle(false);
@@ -51,7 +48,6 @@ export const Board: React.FC = () => {
       title: inputValue,
       description: textareaValue
     }));
-
     toggleIsModalAddCard();
     clearFormFields();
   }
@@ -79,37 +75,6 @@ export const Board: React.FC = () => {
     setCurrentCardId(id);
     toggleIsModalInfoCard();
   }
-
-  // comments
-  const addComment = (id: number, comment: string) => {
-    const newComment = {
-      id: Date.now(),
-      cardId: id,
-      userId: '',
-      comment: comment
-    };
-
-    setComments([...comments, newComment])
-  };
-
-  const editComment = (id: number, comment: string) => {
-    const commentsDuplicate = [...comments];
-    const findComment = commentsDuplicate.find((comment: IComment) => comment.id === id);
-
-    if (findComment) {
-      findComment.comment = comment;
-
-      setComments(commentsDuplicate);
-    }
-  };
-
-  const deleteComment = (id: number) => {
-    const newComments = comments.filter((comment: IComment) => comment.id !== id);
-
-    if (newComments) {
-      setComments(newComments);
-    }
-  };
 
   return (
     <>
@@ -215,10 +180,8 @@ export const Board: React.FC = () => {
                 </CardInfo>
                 <CommentsList
                   comments={comments.filter((comment: IComment) => comment.cardId === card.id)}
+                  user={user}
                   cardId={card.id}
-                  addComment={addComment}
-                  editComment={editComment}
-                  deleteComment={deleteComment}
                 />
               </div>
             )

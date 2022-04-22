@@ -1,13 +1,13 @@
 export {
   userReducer,
   selectUser,
-  addUser
+  addUser,
 } from "./user";
 
 export {
   columnsReducer,
   selectColumns,
-  editColumn
+  editColumn,
 } from "./columns";
 
 export {
@@ -17,3 +17,11 @@ export {
   editCard,
   deleteCard
 } from "./cards";
+
+export {
+  commentsReducer,
+  selectComments,
+  addComment,
+  editComment,
+  deleteComment,
+} from "./comments";

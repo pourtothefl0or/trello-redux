@@ -5,3 +5,6 @@ export interface IComment {
   comment: string;
 };
 
+export interface CommentsState {
+  comments: IComment[];
+}

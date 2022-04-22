@@ -1,13 +1,11 @@
 import React from 'react';
-import { IComment } from '../../types/interfaces';
-
+import { useDispatch } from 'react-redux';
 import { ICard } from '../../store/ducks/cards/types';
-
+import { IComment } from '../../store/ducks/comments/types';
+import { deleteCard } from '../../store';
 import { Card } from '../';
 import { CardAdd } from '../../ui';
 import { CardsItem } from './styles';
-import { useDispatch } from 'react-redux';
-import { deleteCard } from '../../store';
 
 interface CardsListProps {
   cards: ICard[];
