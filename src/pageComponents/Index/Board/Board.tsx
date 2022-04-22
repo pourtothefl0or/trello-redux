@@ -3,7 +3,7 @@ import { ICard, IColumn, IComment, IUser } from '../../../types/interfaces';
 import { Column, CommentsList } from '../../../components';
 import { StyledBoard, BoardContainer, CardInfo, CardInfoTitle, CardForm, CardFormButton, CardInfoItem } from './styles';
 import { Input, Modal, Textarea } from '../../../ui';
-import { useToggle } from '../../../customHooks';
+import { useLocalStorage, useToggle } from '../../../customHooks';
 
 interface BoardProps {
   user: IUser;
@@ -18,9 +18,9 @@ export const Board: React.FC<BoardProps> = (props) => {
     { id: 4, column: 'Done' },
   ];
 
-  const [columns, setColumns] = useState<IColumn[]>(JSON.parse(localStorage.getItem('columns')!) || defaultColumnsArr);
-  const [cards, setCards] = useState<ICard[]>(JSON.parse(localStorage.getItem('cards')!) || []);
-  const [comments, setComments] = useState<IComment[]>(JSON.parse(localStorage.getItem('comments')!) || []);
+  const [columns, setColumns] = useLocalStorage(defaultColumnsArr, 'columns');
+  const [cards, setCards] = useLocalStorage([], 'cards');
+  const [comments, setComments] = useLocalStorage([], 'comments');
 
   // modals
   const [isModalInfoCard, toggleIsModalInfoCard] = useToggle(false);
@@ -47,7 +47,6 @@ export const Board: React.FC<BoardProps> = (props) => {
       findColumnItem.column = values.column;
 
       setColumns(columnDuplicate);
-      localStorage.setItem('columns', JSON.stringify(columnDuplicate));
     }
   };
 
@@ -76,7 +75,6 @@ export const Board: React.FC<BoardProps> = (props) => {
       const newCards = [...cards, card];
 
       setCards(newCards);
-      localStorage.setItem('cards', JSON.stringify(newCards));
 
       toggleIsModalAddCard();
       clearFormFields();
@@ -97,14 +95,13 @@ export const Board: React.FC<BoardProps> = (props) => {
 
     if (findCard) {
       if (inputValue) findCard.title = inputValue;
-      if (textareaValue) findCard.description = textareaValue;
+      findCard.description = textareaValue;
 
       setCards(cardsDuplicate);
-      localStorage.setItem('cards', JSON.stringify(cardsDuplicate));
-
-      toggleIsModalEditCard();
-      clearFormFields();
     }
+
+    toggleIsModalEditCard();
+    clearFormFields();
   };
 
   const deleteCard = (id: number) => {
@@ -115,8 +112,6 @@ export const Board: React.FC<BoardProps> = (props) => {
       setCards(newCards);
       setComments(newComments);
 
-      localStorage.setItem('cards', JSON.stringify(newCards));
-      localStorage.setItem('comments', JSON.stringify(newComments));
     }
   };
 
@@ -129,8 +124,7 @@ export const Board: React.FC<BoardProps> = (props) => {
       comment: comment
     };
 
-    setComments([...comments, newComment]);
-    localStorage.setItem('comments', JSON.stringify([...comments, newComment]));
+    setComments([...comments, newComment])
   };
 
   const editComment = (id: number, comment: string) => {
@@ -141,7 +135,6 @@ export const Board: React.FC<BoardProps> = (props) => {
       findComment.comment = comment;
 
       setComments(commentsDuplicate);
-      localStorage.setItem('comments', JSON.stringify(commentsDuplicate));
     }
   };
 
@@ -150,7 +143,6 @@ export const Board: React.FC<BoardProps> = (props) => {
 
     if (newComments) {
       setComments(newComments);
-      localStorage.setItem('comments', JSON.stringify(newComments));
     }
   };
 
@@ -259,6 +251,7 @@ export const Board: React.FC<BoardProps> = (props) => {
             name="cardTitle"
             value={inputValue}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputValue(e.target.value)}
+            required
           />
           <Textarea
             title="Description"
