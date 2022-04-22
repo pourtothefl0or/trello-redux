@@ -29,7 +29,7 @@ export const Title = styled.h2`
   -webkit-line-clamp: 1;
 
   &::before {
-    content: "';
+    content: '';
     position: absolute;
     top: 50%;
     left: 0;
@@ -70,7 +70,7 @@ export const InputTitleLabel = styled.label`
   width: 100%;
 
   &::before {
-    content: "';
+    content: '';
     position: absolute;
     top: 50%;
     left: 0;
