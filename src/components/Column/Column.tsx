@@ -1,19 +1,22 @@
 import React from 'react';
-import { ICard, IComment } from '../../types/interfaces';
+import { IComment } from '../../types/interfaces';
 
 import { IColumn } from '../../store/ducks/columns/types';
-import { CardFunctions } from '../../types/functions';
+import { ICard } from '../../store/ducks/cards/types';
 
 import { ColumnHeader, CardsList } from '../';
 import { StyledColumn } from './styles';
 
-interface ColumnProps extends CardFunctions {
+interface ColumnProps {
   column: IColumn;
   comments: IComment[];
   cards: ICard[];
+  onAddCardClick: () => void;
+  onEditCardClick: (id: number) => void;
+  onCardClick: (id: number) => void;
 }
 
-export const Column: React.FC<ColumnProps> = ({ column, cards, comments, ...props}) => {
+export const Column: React.FC<ColumnProps> = ({ column, cards, comments, ...props }) => {
   return (
     <StyledColumn>
       <ColumnHeader
@@ -23,10 +26,9 @@ export const Column: React.FC<ColumnProps> = ({ column, cards, comments, ...prop
       <CardsList
         comments={comments}
         cards={cards}
-        onCardClick={props.onCardClick}
         onAddCardClick={props.onAddCardClick}
         onEditCardClick={props.onEditCardClick}
-        onDeleteCardClick={props.onDeleteCardClick}
+        onCardClick={props.onCardClick}
       />
     </StyledColumn>
   )

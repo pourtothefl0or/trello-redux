@@ -16,9 +16,9 @@ const columnsSlice = createSlice({
   reducers: {
     editColumn(state: any, action: any) {
       if (action.payload.column) {
-        const findColumnItem = state.columns.find((el: any) => el.id === action.payload.id);
+        const findItem = state.columns.find((el: any) => el.id === action.payload.id);
 
-        findColumnItem.column = action.payload.column;
+        findItem.column = action.payload.column;
       }
     },
   }

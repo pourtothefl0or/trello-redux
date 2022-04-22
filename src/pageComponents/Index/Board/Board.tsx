@@ -1,24 +1,29 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
-import { ICard, IColumn, IComment } from "../../../types/interfaces";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocalStorage, useToggle } from "../../../customHooks";
-import { selectUser, selectColumns } from "../../../store";
+import { IComment } from "../../../types/interfaces";
+
+import { ICard } from '../../../store/ducks/cards/types';
+import { IColumn } from "../../../store/ducks/columns/types";
+import { selectUser, selectColumns, selectCards, addCard, editCard } from "../../../store";
 
 import { Column, CommentsList } from "../../../components";
 import { Input, Modal, Textarea } from "../../../ui";
 import { StyledBoard, BoardContainer, CardInfo, CardInfoTitle, CardForm, CardFormButton, CardInfoItem } from "./styles";
 
 export const Board: React.FC = () => {
+  const dispatch = useDispatch();
+
   // arrays
   const user =  useSelector(selectUser);
   const columns =  useSelector(selectColumns);
+  const cards =  useSelector(selectCards);
 
-  const [cards, setCards] = useLocalStorage([], 'cards');
   const [comments, setComments] = useLocalStorage([], 'comments');
 
   // modals
-  const [isModalInfoCard, toggleIsModalInfoCard] = useToggle(false);
   const [isModalAddCard, toggleIsModalAddCard] = useToggle(false);
+  const [isModalInfoCard, toggleIsModalInfoCard] = useToggle(false);
   const [isModalEditCard, toggleIsModalEditCard] = useToggle(false);
 
   // values
@@ -33,11 +38,6 @@ export const Board: React.FC = () => {
   };
 
   // cards
-  const onCardClick = (id: number) => {
-    setCurrentCardId(id);
-    toggleIsModalInfoCard();
-  }
-
   const onAddCardClick = (id: number) => {
     setCurrentColumnId(id);
     toggleIsModalAddCard();
@@ -46,24 +46,18 @@ export const Board: React.FC = () => {
   const handleAddCard: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
 
-    if (inputValue) {
-      const card: ICard = {
-        id: Date.now(),
-        columnId: currentColumnId,
-        title: inputValue,
-        description: textareaValue
-      }
+    dispatch(addCard({
+      columnId: currentColumnId,
+      title: inputValue,
+      description: textareaValue
+    }));
 
-      const newCards = [...cards, card];
-
-      setCards(newCards);
-
-      toggleIsModalAddCard();
-      clearFormFields();
-    }
-  };
+    toggleIsModalAddCard();
+    clearFormFields();
+  }
 
   const onEditCardClick = (id: number) => {
+    setCurrentCardId(id);
     setInputValue(cards.find((card: ICard) => card.id === id)?.title || '');
     setTextareaValue(cards.find((card: ICard) => card.id === id)?.description || '');
     toggleIsModalEditCard();
@@ -72,30 +66,19 @@ export const Board: React.FC = () => {
   const handleEditCard: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
 
-    const cardsDuplicate = [...cards];
-    const findCard = cardsDuplicate.find((card: ICard) => card.id === currentCardId);
-
-    if (findCard) {
-      if (inputValue) findCard.title = inputValue;
-      findCard.description = textareaValue;
-
-      setCards(cardsDuplicate);
-    }
-
+    dispatch(editCard({
+      id: currentCardId,
+      title: inputValue,
+      description: textareaValue
+    }))
     toggleIsModalEditCard();
     clearFormFields();
   };
 
-  const deleteCard = (id: number) => {
-    const newCards = cards.filter((card: ICard) => card.id !== id);
-    const newComments = comments.filter((comment: IComment) => comment.cardId !== id);
-
-    if (newCards && newComments) {
-      setCards(newCards);
-      setComments(newComments);
-
-    }
-  };
+  const onCardClick = (id: number) => {
+    setCurrentCardId(id);
+    toggleIsModalInfoCard();
+  }
 
   // comments
   const addComment = (id: number, comment: string) => {
@@ -138,56 +121,15 @@ export const Board: React.FC = () => {
                 key={column.id}
                 column={column}
                 comments={comments}
-                cards={cards.filter((card: ICard) => card.columnId === column.id)}
-                onCardClick={onCardClick}
+                cards={cards.filter(el => el.columnId === column.id)}
                 onAddCardClick={() => onAddCardClick(column.id)}
                 onEditCardClick={onEditCardClick}
-                onDeleteCardClick={deleteCard}
+                onCardClick={onCardClick}
               />
             )
           }
         </BoardContainer>
       </StyledBoard>
-
-      <Modal
-        title="Card info"
-        modalVisibility={isModalInfoCard}
-        onCloseClick={() => toggleIsModalInfoCard()}
-      >
-        {
-          cards
-            .filter((item: ICard) => item.id === currentCardId)
-            .map((card: ICard) =>
-              <div key={card.id}>
-                <CardInfo>
-                  <CardInfoItem>
-                    <CardInfoTitle>Column:</CardInfoTitle>
-                    <h3>{columns.find((column: IColumn) => column.id === card.columnId)?.column}</h3>
-                  </CardInfoItem>
-                  <CardInfoItem>
-                    <CardInfoTitle>Title:</CardInfoTitle>
-                    <h4>{card.title}</h4>
-                  </CardInfoItem>
-                  <CardInfoItem>
-                    <CardInfoTitle>Description:</CardInfoTitle>
-                    <p>{card.description}</p>
-                  </CardInfoItem>
-                  <CardInfoItem>
-                    <CardInfoTitle>Author:</CardInfoTitle>
-                    <p></p>
-                  </CardInfoItem>
-                </CardInfo>
-                <CommentsList
-                  comments={comments.filter((comment: IComment) => comment.cardId === card.id)}
-                  cardId={card.id}
-                  addComment={addComment}
-                  editComment={editComment}
-                  deleteComment={deleteComment}
-                />
-              </div>
-            )
-          }
-      </Modal>
 
       <Modal
         title="Add card"
@@ -241,6 +183,46 @@ export const Board: React.FC = () => {
           />
           <CardFormButton type="submit">Edit</CardFormButton>
         </CardForm>
+      </Modal>
+
+      <Modal
+        title="Card info"
+        modalVisibility={isModalInfoCard}
+        onCloseClick={() => toggleIsModalInfoCard()}
+      >
+        {
+          cards
+            .filter((item: ICard) => item.id === currentCardId)
+            .map((card: ICard) =>
+              <div key={card.id}>
+                <CardInfo>
+                  <CardInfoItem>
+                    <CardInfoTitle>Column:</CardInfoTitle>
+                    <h3>{columns.find((el: IColumn) => el.id === card.columnId)?.column}</h3>
+                  </CardInfoItem>
+                  <CardInfoItem>
+                    <CardInfoTitle>Title:</CardInfoTitle>
+                    <h4>{card.title}</h4>
+                  </CardInfoItem>
+                  <CardInfoItem>
+                    <CardInfoTitle>Description:</CardInfoTitle>
+                    <p>{card.description}</p>
+                  </CardInfoItem>
+                  <CardInfoItem>
+                    <CardInfoTitle>Author:</CardInfoTitle>
+                    <p>{user.name}</p>
+                  </CardInfoItem>
+                </CardInfo>
+                <CommentsList
+                  comments={comments.filter((comment: IComment) => comment.cardId === card.id)}
+                  cardId={card.id}
+                  addComment={addComment}
+                  editComment={editComment}
+                  deleteComment={deleteComment}
+                />
+              </div>
+            )
+          }
       </Modal>
     </>
   )

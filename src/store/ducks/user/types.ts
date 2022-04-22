@@ -4,5 +4,5 @@ interface IUser {
 }
 
 export interface UserState {
-  user: IUser | {};
+  user: IUser;
 }
