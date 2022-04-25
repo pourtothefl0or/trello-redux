@@ -1,10 +1,10 @@
 import React from 'react';
-import { Board, Login } from '../pageComponents/Index';
 import { useSelector } from 'react-redux';
-import { selectUser } from '../store';
+import { selectors } from '../store/ducks';
+import { Board, Login } from '../pageComponents/Index';
 
 export const Index: React.FC = () => {
-  const user = useSelector(selectUser);
+  const user = useSelector(selectors.user.selectUser);
 
   return (
     <>

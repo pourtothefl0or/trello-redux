@@ -7,4 +7,5 @@ export const COLORS = {
   midGray: '#625f6d',
   alto: '#e0e0e0',
   cornflowerBlue: '#4483f7',
+  red: `#ff0000`,
 };

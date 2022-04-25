@@ -1,4 +1,4 @@
-import { IComment } from '../../../types/interface';
+import { IComment } from '../../types/interface';
 
 export interface CommentsState {
   comments: IComment[];

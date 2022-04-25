@@ -1,14 +1,13 @@
 import React from 'react';
 import { useToggle } from '../../customHooks';
-import { useDispatch } from 'react-redux';
-import { editColumn } from '../../store';
-import { IColumn } from '../../types/interface';
 import { useForm } from 'react-hook-form';
+import { useSelector, useDispatch } from 'react-redux';
+import { actions, selectors } from '../../store/ducks';
 import { ButtonClose, PopupMore, PopupMoreItem } from '../../ui';
 import { StyledColumnHeader, TitleInner, Title, CardsSum, ColumnForm, InputTitleLabel, InputTitle } from './styles';
 
 interface ColumnProps {
-  column: IColumn;
+  columnId: number;
   cardsSum: number;
 }
 
@@ -16,20 +15,27 @@ interface ColumnHeaderFields {
   columnTitle: string;
 }
 
-export const ColumnHeader: React.FC<ColumnProps> = ({ column, cardsSum }) => {
+export const ColumnHeader: React.FC<ColumnProps> = ({ columnId, cardsSum }) => {
+  const columns = useSelector(selectors.columns.findColumnsById(columnId));
   const dispatch = useDispatch();
 
-  const { register, handleSubmit, reset, setValue } = useForm<ColumnHeaderFields>();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors }
+  } = useForm<ColumnHeaderFields>();
 
   const [isEditMode, toggleIsEditMode] = useToggle(false);
 
   const onEditClick = () => {
-    setValue('columnTitle', column.column);
+    setValue('columnTitle', columns?.column || '');
     toggleIsEditMode();
   }
 
   const handleEditColumn = handleSubmit((data: ColumnHeaderFields) => {
-    dispatch(editColumn(({ id: column.id, column: data.columnTitle })));
+    dispatch(actions.columns.editColumn(({ id: columns?.id, column: data.columnTitle })));
     toggleIsEditMode();
     reset();
   });
@@ -44,6 +50,7 @@ export const ColumnHeader: React.FC<ColumnProps> = ({ column, cardsSum }) => {
               <InputTitle
                 type="text"
                 {...register('columnTitle', { required: true, })}
+                className={errors.columnTitle && 'error'}
               />
             </InputTitleLabel>
             <ButtonClose type="submit" />
@@ -51,7 +58,7 @@ export const ColumnHeader: React.FC<ColumnProps> = ({ column, cardsSum }) => {
           :
           <>
             <TitleInner>
-              <Title>{column.column}</Title>
+              <Title>{columns?.column}</Title>
             </TitleInner>
             <CardsSum>{cardsSum}</CardsSum>
             <PopupMore>

@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useToggle } from '../../../customHooks';
-import { IColumn, ICard, IComment } from '../../../types/interface';
-import { selectUser, selectColumns, selectCards, selectComments, addCard, editCard } from '../../../store';
 import { useForm } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
+import { actions, selectors } from '../../../store/ducks';
 import { Column, CommentsList } from '../../../components';
 import { Input, Modal, Textarea } from '../../../ui';
 import { StyledBoard, BoardContainer, CardInfo, CardInfoTitle, CardForm, CardFormButton, CardInfoItem } from './styles';
@@ -14,44 +13,44 @@ interface BoardFields {
 }
 
 export const Board: React.FC = () => {
+  const [currentCardId, setCurrentCardId] = useState(0);
+  const [currentColumnId, setCurrentColumnId] = useState(0);
+
+  const user = useSelector(selectors.user.selectUser);
+  const columns = useSelector(selectors.columns.selectColumns);
+
+  const filterCardById = useSelector(selectors.cards.filterCardsById(currentCardId));
+  const useFindCardById = (id: number) => useSelector(selectors.cards.findCardById(id)); // Fix!
+  const useFindColumnById = (id: number) => useSelector(selectors.columns.findColumnsById(id)); // Fix!
+
   const dispatch = useDispatch();
 
-  // arrays
-  const user = useSelector(selectUser);
-  const columns = useSelector(selectColumns);
-  const cards = useSelector(selectCards);
-  const comments = useSelector(selectComments);
-
-  // modals
   const [isModalAddCard, toggleIsModalAddCard] = useToggle(false);
   const [isModalInfoCard, toggleIsModalInfoCard] = useToggle(false);
   const [isModalEditCard, toggleIsModalEditCard] = useToggle(false);
 
-  // values
   const {
     register: registerAddCard,
     handleSubmit: handleSubmitAddCard,
-    reset: resetAddCard
+    reset: resetAddCard,
+    formState: { errors: errorsAddCard }
   } = useForm<BoardFields>();
 
   const {
     register: registerEditCard,
     handleSubmit: handleSubmitEditCard,
     reset: resetEditCard,
-    setValue: setValueEditCard
+    setValue: setValueEditCard,
+    formState: { errors: errorsEditCard }
   } = useForm<BoardFields>();
 
-  const [currentCardId, setCurrentCardId] = useState(0);
-  const [currentColumnId, setCurrentColumnId] = useState(0);
-
-  // cards
   const onAddCardClick = (id: number) => {
     setCurrentColumnId(id);
     toggleIsModalAddCard();
   }
 
   const handleAddCard = handleSubmitAddCard((data: BoardFields) => {
-    dispatch(addCard({
+    dispatch(actions.cards.addCard({
       id: Date.now(),
       columnId: currentColumnId,
       title: data.cardTitle,
@@ -63,13 +62,13 @@ export const Board: React.FC = () => {
 
   const onEditCardClick = (id: number) => {
     setCurrentCardId(id);
-    setValueEditCard('cardTitle', cards.find((card: ICard) => card.id === id)?.title || '');
-    setValueEditCard('cardDescription', cards.find((card: ICard) => card.id === id)?.description || '');
+    setValueEditCard('cardTitle', useFindCardById(id)?.title || '');
+    setValueEditCard('cardDescription', useFindCardById(id)?.description || '');
     toggleIsModalEditCard();
   }
 
   const handleEditCard = handleSubmitEditCard((data: BoardFields) => {
-    dispatch(editCard({
+    dispatch(actions.cards.editCard({
       id: currentCardId,
       title: data.cardTitle,
       description: data.cardDescription
@@ -91,9 +90,7 @@ export const Board: React.FC = () => {
             columns.map(column =>
               <Column
                 key={column.id}
-                column={column}
-                comments={comments}
-                cards={cards.filter(el => el.columnId === column.id)}
+                columnId={column.id}
                 onAddCardClick={() => onAddCardClick(column.id)}
                 onEditCardClick={onEditCardClick}
                 onCardClick={onCardClick}
@@ -113,10 +110,12 @@ export const Board: React.FC = () => {
             title="Title"
             type="text"
             {...registerAddCard('cardTitle', { required: true, })}
+            className={errorsAddCard.cardTitle && 'error'}
           />
           <Textarea
             title="Description"
             {...registerAddCard('cardDescription')}
+            className={errorsAddCard.cardDescription && 'error'}
           />
           <CardFormButton type="submit">Add</CardFormButton>
         </CardForm>
@@ -132,10 +131,12 @@ export const Board: React.FC = () => {
             title="Title"
             type="text"
             {...registerEditCard('cardTitle', { required: true, })}
+            className={errorsEditCard.cardTitle && 'error'}
           />
           <Textarea
             title="Description"
-            {...registerEditCard('cardDescription', { required: true, })}
+            {...registerEditCard('cardDescription')}
+            className={errorsEditCard.cardDescription && 'error'}
           />
           <CardFormButton type="submit">Edit</CardFormButton>
         </CardForm>
@@ -147,36 +148,33 @@ export const Board: React.FC = () => {
         onCloseClick={() => toggleIsModalInfoCard()}
       >
         {
-          cards
-            .filter((item: ICard) => item.id === currentCardId)
-            .map((card: ICard) =>
-              <div key={card.id}>
-                <CardInfo>
-                  <CardInfoItem>
-                    <CardInfoTitle>Column:</CardInfoTitle>
-                    <h3>{columns.find((el: IColumn) => el.id === card.columnId)?.column}</h3>
-                  </CardInfoItem>
-                  <CardInfoItem>
-                    <CardInfoTitle>Title:</CardInfoTitle>
-                    <h4>{card.title}</h4>
-                  </CardInfoItem>
-                  <CardInfoItem>
-                    <CardInfoTitle>Description:</CardInfoTitle>
-                    <p>{card.description}</p>
-                  </CardInfoItem>
-                  <CardInfoItem>
-                    <CardInfoTitle>Author:</CardInfoTitle>
-                    <p>{user.name}</p>
-                  </CardInfoItem>
-                </CardInfo>
-                <CommentsList
-                  comments={comments.filter((comment: IComment) => comment.cardId === card.id)}
-                  user={user}
-                  cardId={card.id}
-                />
-              </div>
-            )
-          }
+          filterCardById.map(card =>
+            <div key={card.id}>
+              <CardInfo>
+                <CardInfoItem>
+                  <CardInfoTitle>Column:</CardInfoTitle>
+                  <h3>{useFindColumnById(card.columnId)?.column || ''}</h3>
+                </CardInfoItem>
+                <CardInfoItem>
+                  <CardInfoTitle>Title:</CardInfoTitle>
+                  <h4>{card.title}</h4>
+                </CardInfoItem>
+                <CardInfoItem>
+                  <CardInfoTitle>Description:</CardInfoTitle>
+                  <p>{card.description}</p>
+                </CardInfoItem>
+                <CardInfoItem>
+                  <CardInfoTitle>Author:</CardInfoTitle>
+                  <p>{user.name}</p>
+                </CardInfoItem>
+              </CardInfo>
+              <CommentsList
+                user={user}
+                cardId={card.id}
+              />
+            </div>
+          )
+        }
       </Modal>
     </>
   )

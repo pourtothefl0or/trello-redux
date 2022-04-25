@@ -1,6 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { ColumnsState } from './types';
-import { IColumn } from '../../../types/interface';
 
 const initialState: ColumnsState = {
   columns: [
@@ -25,6 +24,5 @@ const columnsSlice = createSlice({
   }
 });
 
-export const { editColumn } = columnsSlice.actions;
-
-export default columnsSlice.reducer;
+export const actions = columnsSlice.actions;
+export const reducers = columnsSlice.reducer;

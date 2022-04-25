@@ -1,7 +1,7 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
-import { addUser } from '../../../store';
 import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+import { actions } from '../../../store/ducks';
 import { Button, Input } from '../../../ui';
 import { LoginContainer, LoginTitle, LoginForm } from './styles';
 
@@ -10,12 +10,17 @@ interface LoginFields {
 }
 
 export const Login: React.FC = () => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm<LoginFields>();
+
   const dispatch = useDispatch();
 
-  const { register, handleSubmit, reset } = useForm<LoginFields>();
-
   const handleAddUser = handleSubmit((data: LoginFields) => {
-    dispatch(addUser({ name: data.username }));
+    dispatch(actions.user.addUser({ name: data.username }));
     reset();
   });
 
@@ -27,11 +32,12 @@ export const Login: React.FC = () => {
           <Input
             type="text"
             placeholder="Write your name..."
-            {...register('username', { required: true, })}
+            {...register('username',{ required: true, })}
+            className={errors.username && 'error'}
           />
           <Button type="submit">Enter</Button>
         </LoginForm>
       </LoginContainer>
     </section>
-  )
-}
+  );
+};

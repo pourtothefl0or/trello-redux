@@ -86,8 +86,14 @@ export const InputTitleLabel = styled.label`
 export const InputTitle = styled.input`
   margin: 0;
   border: 0;
+  border-bottom: 1px solid transparent;
   padding: 0;
   width: 100%;
   font-weight: 700;
   font-size: 18px;
+  background-color: ${COLORS.white};
+
+  &.error {
+    border-bottom: 1px solid ${COLORS.red};
+  }
 `;

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { CardsState } from './types';
-import { ICard } from '../../../types/interface';
+import { ICard } from '../../types/interface';
 
 const initialState: CardsState = {
   cards: []
@@ -31,6 +31,5 @@ const cardsSlice = createSlice({
   }
 });
 
-export const { addCard, editCard, deleteCard } = cardsSlice.actions;
-
-export default cardsSlice.reducer;
+export const actions = cardsSlice.actions;
+export const reducers = cardsSlice.reducer;

@@ -1,27 +1,27 @@
 import React from 'react';
-import { IColumn, ICard, IComment } from '../../types/interface';
+import { useSelector } from 'react-redux';
+import { selectors } from '../../store/ducks';
 import { ColumnHeader, CardsList } from '../';
 import { StyledColumn } from './styles';
 
 interface ColumnProps {
-  column: IColumn;
-  comments: IComment[];
-  cards: ICard[];
+  columnId: number;
   onAddCardClick: () => void;
   onEditCardClick: (id: number) => void;
   onCardClick: (id: number) => void;
 }
 
-export const Column: React.FC<ColumnProps> = ({ column, cards, comments, ...props }) => {
+export const Column: React.FC<ColumnProps> = ({ columnId, ...props }) => {
+  const cards = useSelector(selectors.cards.filterCardsByColumnId(columnId));
+
   return (
     <StyledColumn>
       <ColumnHeader
-        column={column}
+        columnId={columnId}
         cardsSum={cards.length || 0}
       />
       <CardsList
-        comments={comments}
-        cards={cards}
+        columnId={columnId}
         onAddCardClick={props.onAddCardClick}
         onEditCardClick={props.onEditCardClick}
         onCardClick={props.onCardClick}

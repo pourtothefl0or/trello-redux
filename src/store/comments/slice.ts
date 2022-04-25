@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { CommentsState } from './types';
-import { IComment } from '../../../types/interface';
+import { IComment } from '../../types/interface';
 
 const initialState: CommentsState = {
   comments: []
@@ -31,6 +31,5 @@ const cardsSlice = createSlice({
   }
 });
 
-export const { addComment, editComment, deleteComment } = cardsSlice.actions;
-
-export default cardsSlice.reducer;
+export const actions = cardsSlice.actions;
+export const reducers = cardsSlice.reducer;

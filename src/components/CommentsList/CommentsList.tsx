@@ -1,14 +1,13 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
-import { IUser, IComment } from '../../types/interface';
-import { addComment } from '../../store';
+import { actions, selectors } from '../../store/ducks';
 import { Comment } from '../';
 import { Textarea, Button } from '../../ui';
 import { StyledCommentsList, CommentItem, CommentForm } from './styles';
+import { IUser, IComment } from '../../types/interface';
 
 interface CommentsListProps {
-  comments: IComment[];
   user: IUser;
   cardId: number;
 }
@@ -17,13 +16,19 @@ interface CommentFields {
   cardDescription: string;
 }
 
-export const CommentsList: React.FC<CommentsListProps> = ({ comments, user, cardId }) => {
+export const CommentsList: React.FC<CommentsListProps> = ({ user, cardId }) => {
+  const comments = useSelector(selectors.comments.filterCommentsByCardId(cardId));
   const dispatch = useDispatch();
 
-  const { register, handleSubmit, reset } = useForm<CommentFields>();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm<CommentFields>();
 
   const handleAddComment = handleSubmit((data: CommentFields) => {
-    dispatch(addComment({
+    dispatch(actions.comments.addComment({
       cardId: cardId,
       userId: user.id,
       comment: data.cardDescription
@@ -48,6 +53,7 @@ export const CommentsList: React.FC<CommentsListProps> = ({ comments, user, card
           <Textarea
             placeholder="Add a comment..."
             {...register('cardDescription', { required: true, })}
+            className={errors.cardDescription && 'error'}
           />
           <Button>Add</Button>
         </CommentForm>

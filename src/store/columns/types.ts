@@ -1,4 +1,4 @@
-import { IColumn } from '../../../types/interface';
+import { IColumn } from '../../types/interface';
 
 export interface ColumnsState {
   columns: IColumn[];

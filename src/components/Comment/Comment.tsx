@@ -1,11 +1,11 @@
-import React from 'react';
-import { useToggle } from '../../customHooks';
+import React, { useRef, useState } from 'react';
+import { useOnClickOutside } from '../../customHooks';
 import { useDispatch } from 'react-redux';
-import { deleteComment, editComment } from '../../store';
 import { useForm } from 'react-hook-form';
-import { IComment } from '../../types/interface';
+import { actions } from '../../store/ducks';
 import { PopupMoreItem, Button, Input } from '../../ui';
 import { StyledComment, CommentHeader, CommentUserLogo, CommentUserName, CommentPopupMore, CommentsText, CommentForm } from './styles';
+import { IComment } from '../../types/interface';
 
 interface CommentProps {
   name: string | undefined;
@@ -16,31 +16,40 @@ interface CommentFields {
   commentText: string;
 }
 
-export const Comment: React.FC<CommentProps> = ({ name, comment, ...props }) => {
+export const Comment: React.FC<CommentProps> = ({ name, comment }) => {
   const dispatch = useDispatch();
 
-  const { register, handleSubmit, reset, setValue } = useForm<CommentFields>();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors }
+  } = useForm<CommentFields>();
 
-  const [isEditMode, toggleIsEditMode] = useToggle(false);
+  const rootRef = useRef(null);
+
+  const [isEditMode, setIsEditMode] = useState(false);
+  useOnClickOutside(rootRef, () => setIsEditMode(false));
 
   const onEditClick = () => {
     setValue('commentText', comment.comment);
-    toggleIsEditMode();
+    setIsEditMode(!isEditMode);
   }
 
   const handleEditComment = handleSubmit((data: CommentFields) => {
-    dispatch(editComment({
+    dispatch(actions.comments.editComment({
       id: comment.id,
       comment: data.commentText
     }))
-    toggleIsEditMode();
+    setIsEditMode(!isEditMode);
     reset();
   });
 
-  const onDeleteItemClick = (id: number) => dispatch(deleteComment({ id: id }))
+  const onDeleteItemClick = (id: number) => dispatch(actions.comments.deleteComment({ id: id }))
 
   return (
-    <StyledComment>
+    <StyledComment ref={rootRef}>
       <CommentHeader>
         <CommentUserLogo>{name?.split('')[0]}</CommentUserLogo>
         <CommentUserName>{name}</CommentUserName>
@@ -62,6 +71,7 @@ export const Comment: React.FC<CommentProps> = ({ name, comment, ...props }) => 
             <Input
               type="text"
               {...register('commentText', { required: true, })}
+              className={errors.commentText && 'error'}
             />
             <Button type="submit">Edit</Button>
           </CommentForm>
