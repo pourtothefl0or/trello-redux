@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useToggle } from '../../customHooks';
 import { useDispatch } from 'react-redux';
 import { deleteComment, editComment } from '../../store';
+import { useForm } from 'react-hook-form';
 import { IComment } from '../../types/interface';
 import { PopupMoreItem, Button, Input } from '../../ui';
 import { StyledComment, CommentHeader, CommentUserLogo, CommentUserName, CommentPopupMore, CommentsText, CommentForm } from './styles';
@@ -11,27 +12,30 @@ interface CommentProps {
   comment: IComment;
 }
 
+interface CommentFields {
+  commentText: string;
+}
+
 export const Comment: React.FC<CommentProps> = ({ name, comment, ...props }) => {
   const dispatch = useDispatch();
 
+  const { register, handleSubmit, reset, setValue } = useForm<CommentFields>();
+
   const [isEditMode, toggleIsEditMode] = useToggle(false);
-  const [inputValue, setInputValue] = useState('');
 
   const onEditClick = () => {
-    setInputValue(comment.comment);
+    setValue('commentText', comment.comment);
     toggleIsEditMode();
   }
 
-  const handleEditComment: React.FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-
+  const handleEditComment = handleSubmit((data: CommentFields) => {
     dispatch(editComment({
       id: comment.id,
-      comment: inputValue
+      comment: data.commentText
     }))
     toggleIsEditMode();
-    setInputValue('');
-  };
+    reset();
+  });
 
   const onDeleteItemClick = (id: number) => dispatch(deleteComment({ id: id }))
 
@@ -57,10 +61,7 @@ export const Comment: React.FC<CommentProps> = ({ name, comment, ...props }) => 
             <CommentForm onSubmit={handleEditComment}>
             <Input
               type="text"
-              name="commentText"
-              value={inputValue}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputValue(e.target.value)}
-              required
+              {...register('commentText', { required: true, })}
             />
             <Button type="submit">Edit</Button>
           </CommentForm>

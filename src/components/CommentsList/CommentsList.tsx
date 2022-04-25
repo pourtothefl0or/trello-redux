@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
+import { useForm } from 'react-hook-form';
 import { IUser, IComment } from '../../types/interface';
 import { addComment } from '../../store';
 import { Comment } from '../';
@@ -12,21 +13,23 @@ interface CommentsListProps {
   cardId: number;
 }
 
+interface CommentFields {
+  cardDescription: string;
+}
+
 export const CommentsList: React.FC<CommentsListProps> = ({ comments, user, cardId }) => {
   const dispatch = useDispatch();
 
-  const [textareaValue, setTextareaValue] = useState('');
+  const { register, handleSubmit, reset } = useForm<CommentFields>();
 
-  const handleAddComment: React.FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-
+  const handleAddComment = handleSubmit((data: CommentFields) => {
     dispatch(addComment({
       cardId: cardId,
       userId: user.id,
-      comment: textareaValue
-    }))
-    setTextareaValue('');
-  }
+      comment: data.cardDescription
+    }));
+    reset();
+  });
 
   return (
     <StyledCommentsList>
@@ -43,11 +46,8 @@ export const CommentsList: React.FC<CommentsListProps> = ({ comments, user, card
       <CommentItem>
         <CommentForm onSubmit={handleAddComment}>
           <Textarea
-            name="cardDescription"
             placeholder="Add a comment..."
-            value={textareaValue}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setTextareaValue(e.target.value)}
-            required
+            {...register('cardDescription', { required: true, })}
           />
           <Button>Add</Button>
         </CommentForm>

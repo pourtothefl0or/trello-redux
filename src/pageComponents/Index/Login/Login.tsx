@@ -1,19 +1,23 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 import { addUser } from '../../../store';
+import { useForm } from 'react-hook-form';
 import { Button, Input } from '../../../ui';
 import { LoginContainer, LoginTitle, LoginForm } from './styles';
+
+interface LoginFields {
+  username: string;
+}
 
 export const Login: React.FC = () => {
   const dispatch = useDispatch();
 
-  const [inputValue, setInputValue] = useState('');
+  const { register, handleSubmit, reset } = useForm<LoginFields>();
 
-  const handleAddUser: React.FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-
-    dispatch(addUser({ name: inputValue }));
-  }
+  const handleAddUser = handleSubmit((data: LoginFields) => {
+    dispatch(addUser({ name: data.username }));
+    reset();
+  });
 
   return (
     <section>
@@ -22,11 +26,8 @@ export const Login: React.FC = () => {
         <LoginForm onSubmit={handleAddUser}>
           <Input
             type="text"
-            name="username"
             placeholder="Write your name..."
-            value={inputValue}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputValue(e.target.value)}
-            required
+            {...register('username', { required: true, })}
           />
           <Button type="submit">Enter</Button>
         </LoginForm>

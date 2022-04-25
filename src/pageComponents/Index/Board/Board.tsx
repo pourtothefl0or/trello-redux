@@ -3,18 +3,24 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useToggle } from '../../../customHooks';
 import { IColumn, ICard, IComment } from '../../../types/interface';
 import { selectUser, selectColumns, selectCards, selectComments, addCard, editCard } from '../../../store';
+import { useForm } from 'react-hook-form';
 import { Column, CommentsList } from '../../../components';
 import { Input, Modal, Textarea } from '../../../ui';
 import { StyledBoard, BoardContainer, CardInfo, CardInfoTitle, CardForm, CardFormButton, CardInfoItem } from './styles';
+
+interface BoardFields {
+  cardTitle: string;
+  cardDescription: string;
+}
 
 export const Board: React.FC = () => {
   const dispatch = useDispatch();
 
   // arrays
-  const user =  useSelector(selectUser);
-  const columns =  useSelector(selectColumns);
-  const cards =  useSelector(selectCards);
-  const comments =  useSelector(selectComments);
+  const user = useSelector(selectUser);
+  const columns = useSelector(selectColumns);
+  const cards = useSelector(selectCards);
+  const comments = useSelector(selectComments);
 
   // modals
   const [isModalAddCard, toggleIsModalAddCard] = useToggle(false);
@@ -22,15 +28,21 @@ export const Board: React.FC = () => {
   const [isModalEditCard, toggleIsModalEditCard] = useToggle(false);
 
   // values
+  const {
+    register: registerAddCard,
+    handleSubmit: handleSubmitAddCard,
+    reset: resetAddCard
+  } = useForm<BoardFields>();
+
+  const {
+    register: registerEditCard,
+    handleSubmit: handleSubmitEditCard,
+    reset: resetEditCard,
+    setValue: setValueEditCard
+  } = useForm<BoardFields>();
+
   const [currentCardId, setCurrentCardId] = useState(0);
   const [currentColumnId, setCurrentColumnId] = useState(0);
-  const [inputValue, setInputValue] = useState('');
-  const [textareaValue, setTextareaValue] = useState('');
-
-  const clearFormFields = () => {
-    setInputValue('');
-    setTextareaValue('');
-  };
 
   // cards
   const onAddCardClick = (id: number) => {
@@ -38,37 +50,33 @@ export const Board: React.FC = () => {
     toggleIsModalAddCard();
   }
 
-  const handleAddCard: React.FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-
+  const handleAddCard = handleSubmitAddCard((data: BoardFields) => {
     dispatch(addCard({
       id: Date.now(),
       columnId: currentColumnId,
-      title: inputValue,
-      description: textareaValue
+      title: data.cardTitle,
+      description: data.cardDescription
     }));
     toggleIsModalAddCard();
-    clearFormFields();
-  }
+    resetAddCard();
+  });
 
   const onEditCardClick = (id: number) => {
     setCurrentCardId(id);
-    setInputValue(cards.find((card: ICard) => card.id === id)?.title || '');
-    setTextareaValue(cards.find((card: ICard) => card.id === id)?.description || '');
+    setValueEditCard('cardTitle', cards.find((card: ICard) => card.id === id)?.title || '');
+    setValueEditCard('cardDescription', cards.find((card: ICard) => card.id === id)?.description || '');
     toggleIsModalEditCard();
   }
 
-  const handleEditCard: React.FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-
+  const handleEditCard = handleSubmitEditCard((data: BoardFields) => {
     dispatch(editCard({
       id: currentCardId,
-      title: inputValue,
-      description: textareaValue
+      title: data.cardTitle,
+      description: data.cardDescription
     }))
     toggleIsModalEditCard();
-    clearFormFields();
-  };
+    resetEditCard();
+  });
 
   const onCardClick = (id: number) => {
     setCurrentCardId(id);
@@ -98,25 +106,17 @@ export const Board: React.FC = () => {
       <Modal
         title="Add card"
         modalVisibility={isModalAddCard}
-        onCloseClick={() => {
-          toggleIsModalAddCard();
-          clearFormFields();
-        }}
+        onCloseClick={() => toggleIsModalAddCard()}
       >
         <CardForm onSubmit={handleAddCard}>
           <Input
             title="Title"
             type="text"
-            name="cardTitle"
-            value={inputValue}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputValue(e.target.value)}
-            required
+            {...registerAddCard('cardTitle', { required: true, })}
           />
           <Textarea
             title="Description"
-            name="cardDescription"
-            value={textareaValue}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setTextareaValue(e.target.value)}
+            {...registerAddCard('cardDescription')}
           />
           <CardFormButton type="submit">Add</CardFormButton>
         </CardForm>
@@ -125,25 +125,17 @@ export const Board: React.FC = () => {
       <Modal
         title="Edit card"
         modalVisibility={isModalEditCard}
-        onCloseClick={() => {
-          toggleIsModalEditCard()
-          clearFormFields();
-        }}
+        onCloseClick={() => toggleIsModalEditCard()}
       >
         <CardForm onSubmit={handleEditCard}>
           <Input
             title="Title"
             type="text"
-            name="cardTitle"
-            value={inputValue}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputValue(e.target.value)}
-            required
+            {...registerEditCard('cardTitle', { required: true, })}
           />
           <Textarea
             title="Description"
-            name="cardDescription"
-            value={textareaValue}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setTextareaValue(e.target.value)}
+            {...registerEditCard('cardDescription', { required: true, })}
           />
           <CardFormButton type="submit">Edit</CardFormButton>
         </CardForm>

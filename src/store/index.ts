@@ -13,6 +13,7 @@ export {
 export {
   cardsReducer,
   selectCards,
+  filteredCardsByColumnId,
   addCard,
   editCard,
   deleteCard

@@ -1,3 +1,3 @@
 export { default as userReducer } from './slice';
-export { selectUser } from './selector';
+export { selectUser } from './selectors';
 export { addUser } from './slice';
