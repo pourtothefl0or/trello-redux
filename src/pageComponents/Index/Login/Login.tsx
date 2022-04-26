@@ -15,12 +15,15 @@ export const Login: React.FC = () => {
     handleSubmit,
     reset,
     formState: { errors }
-  } = useForm<LoginFields>();
+  } = useForm<LoginFields>({ mode: 'onChange' });
 
   const dispatch = useDispatch();
 
   const handleAddUser = handleSubmit((data: LoginFields) => {
-    dispatch(actions.user.addUser({ name: data.username }));
+    dispatch(actions.user.addUser({
+      id: Date.now(),
+      name: data.username
+    }));
     reset();
   });
 

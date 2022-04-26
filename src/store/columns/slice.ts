@@ -1,7 +1,8 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { ColumnsState } from './types';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { IColumn } from '../../types/interface';
+import { InitialState } from './types';
 
-const initialState: ColumnsState = {
+const initialState: InitialState = {
   columns: [
     { id: 1, column: 'To Do' },
     { id: 2, column: 'In progress' },
@@ -14,11 +15,11 @@ const columnsSlice = createSlice({
   name: 'columns',
   initialState,
   reducers: {
-    editColumn(state: any, action: any) {
-      if (action.payload.column) {
-        const findItem = state.columns.find((el: any) => el.id === action.payload.id);
+    editColumn(state: any, { payload }: PayloadAction<IColumn>) {
+      if (payload.column) {
+        const findItem = state.columns.find((el: IColumn) => el.id === payload.id);
 
-        findItem.column = action.payload.column;
+        findItem.column = payload.column;
       }
     },
   }

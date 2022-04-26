@@ -4,12 +4,11 @@ import { actions, selectors } from '../../store/ducks';
 import { Card } from '../';
 import { CardAdd } from '../../ui';
 import { CardsItem } from './styles';
-import { ICard } from '../../types/interface';
 
 interface CardsListProps {
   columnId: number;
   onAddCardClick: () => void;
-  onEditCardClick: (id: number) => void;
+  onEditCardClick: (cardId: number, columnId: number) => void;
   onCardClick: (id: number) => void;
 }
 
@@ -23,13 +22,13 @@ export const CardsList: React.FC<CardsListProps> = ({ columnId, ...props }) => {
   return (
     <ul>
       {
-        cards.map((card: ICard) =>
+        cards.map(card =>
           <CardsItem key={card.id}>
             <Card
               title={card.title}
-              commentsSum={useFilteredComments.length || 0}
+              commentsSum={useFilteredComments(card.id).length || 0}
               onDeleteClick={() => onDeleteClick(card.id)}
-              onEditClick={() => props.onEditCardClick(card.id)}
+              onEditClick={() => props.onEditCardClick(card.id, columnId)}
               onCardClick={() => props.onCardClick(card.id)}
             />
           </CardsItem>

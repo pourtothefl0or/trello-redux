@@ -1,5 +1,5 @@
 import { IComment } from '../../types/interface';
 
-export interface CommentsState {
+export interface InitialState {
   comments: IComment[];
 }

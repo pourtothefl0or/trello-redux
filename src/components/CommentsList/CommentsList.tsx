@@ -25,10 +25,11 @@ export const CommentsList: React.FC<CommentsListProps> = ({ user, cardId }) => {
     handleSubmit,
     reset,
     formState: { errors }
-  } = useForm<CommentFields>();
+  } = useForm<CommentFields>({ mode: 'onChange' });
 
   const handleAddComment = handleSubmit((data: CommentFields) => {
     dispatch(actions.comments.addComment({
+      id: Date.now(),
       cardId: cardId,
       userId: user.id,
       comment: data.cardDescription

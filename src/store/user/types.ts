@@ -1,5 +1,5 @@
 import { IUser } from '../../types/interface';
 
-export interface UserState {
+export interface InitialState {
   user: IUser;
 }

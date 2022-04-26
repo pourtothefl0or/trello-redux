@@ -1,7 +1,8 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { UserState } from './types';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { IUser } from '../../types/interface';
+import { InitialState } from './types';
 
-const initialState: UserState | any = {
+const initialState: InitialState | any = {
   user: {}
 }
 
@@ -9,11 +10,11 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    addUser(state: any, action: any) {
-      if (action.payload.name) {
+    addUser(state: any, { payload }: PayloadAction<IUser>) {
+      if (payload.name) {
         state.user = {
-          id: 1,
-          name: action.payload.name
+          id: payload.id,
+          name: payload.name
         };
       }
     },

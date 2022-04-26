@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { CardsState } from './types';
+import { InitialState } from './types';
 import { ICard } from '../../types/interface';
 
-const initialState: CardsState = {
+const initialState: InitialState = {
   cards: []
 }
 
@@ -20,13 +20,13 @@ const cardsSlice = createSlice({
         });
       }
     },
-    editCard(state: any, action: any) {
-      const findItem = state.cards.find((el: ICard) => el.id === action.payload.id);
+    editCard(state: any, { payload }: PayloadAction<Omit<ICard, 'columnId'>>) {
+      const findItem = state.cards.find((el: ICard) => el.id === payload.id);
 
-      [findItem.title, findItem.description] = [action.payload.title, action.payload.description];
+      [findItem.title, findItem.description] = [payload.title, payload.description];
     },
-    deleteCard(state: any, action: any) {
-      state.cards = state.cards.filter((el: ICard) => el.id !== action.payload.id);
+    deleteCard(state: any, { payload }: PayloadAction<{ id: number }>) {
+      state.cards = state.cards.filter((el: ICard) => el.id !== payload.id);
     }
   }
 });

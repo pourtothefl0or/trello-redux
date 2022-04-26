@@ -1,5 +1,5 @@
 import { ICard } from '../../types/interface';
 
-export interface CardsState {
+export interface InitialState {
   cards: ICard[];
 }

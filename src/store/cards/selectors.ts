@@ -11,7 +11,7 @@ export const filterCardsByColumnId = (columnId: number) => {
 
 export const filterCardsById = (id: number) => {
   return createSelector(selectCards, (state) =>
-    state.filter(el => el.columnId === id)
+    state.filter(el => el.id === id)
   );
 }
 

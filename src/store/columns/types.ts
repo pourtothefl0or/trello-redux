@@ -1,5 +1,5 @@
 import { IColumn } from '../../types/interface';
 
-export interface ColumnsState {
+export interface InitialState {
   columns: IColumn[];
 }

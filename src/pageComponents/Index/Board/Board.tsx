@@ -18,8 +18,8 @@ export const Board: React.FC = () => {
 
   const user = useSelector(selectors.user.selectUser);
   const columns = useSelector(selectors.columns.selectColumns);
+  const cards = useSelector(selectors.cards.filterCardsById(currentCardId));
 
-  const filterCardById = useSelector(selectors.cards.filterCardsById(currentCardId));
   const useFindCardById = (id: number) => useSelector(selectors.cards.findCardById(id)); // Fix!
   const useFindColumnById = (id: number) => useSelector(selectors.columns.findColumnsById(id)); // Fix!
 
@@ -34,7 +34,7 @@ export const Board: React.FC = () => {
     handleSubmit: handleSubmitAddCard,
     reset: resetAddCard,
     formState: { errors: errorsAddCard }
-  } = useForm<BoardFields>();
+  } = useForm<BoardFields>({ mode: 'onChange' });
 
   const {
     register: registerEditCard,
@@ -42,7 +42,7 @@ export const Board: React.FC = () => {
     reset: resetEditCard,
     setValue: setValueEditCard,
     formState: { errors: errorsEditCard }
-  } = useForm<BoardFields>();
+  } = useForm<BoardFields>({ mode: 'onChange' });
 
   const onAddCardClick = (id: number) => {
     setCurrentColumnId(id);
@@ -148,7 +148,7 @@ export const Board: React.FC = () => {
         onCloseClick={() => toggleIsModalInfoCard()}
       >
         {
-          filterCardById.map(card =>
+          cards.map(card =>
             <div key={card.id}>
               <CardInfo>
                 <CardInfoItem>

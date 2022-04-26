@@ -25,7 +25,7 @@ export const ColumnHeader: React.FC<ColumnProps> = ({ columnId, cardsSum }) => {
     reset,
     setValue,
     formState: { errors }
-  } = useForm<ColumnHeaderFields>();
+  } = useForm<ColumnHeaderFields>({ mode: 'onChange' });
 
   const [isEditMode, toggleIsEditMode] = useToggle(false);
 
@@ -35,7 +35,7 @@ export const ColumnHeader: React.FC<ColumnProps> = ({ columnId, cardsSum }) => {
   }
 
   const handleEditColumn = handleSubmit((data: ColumnHeaderFields) => {
-    dispatch(actions.columns.editColumn(({ id: columns?.id, column: data.columnTitle })));
+    dispatch(actions.columns.editColumn(({ id: columns?.id || 0, column: data.columnTitle })));
     toggleIsEditMode();
     reset();
   });

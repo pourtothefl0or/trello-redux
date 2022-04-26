@@ -25,7 +25,7 @@ export const Comment: React.FC<CommentProps> = ({ name, comment }) => {
     reset,
     setValue,
     formState: { errors }
-  } = useForm<CommentFields>();
+  } = useForm<CommentFields>({ mode: 'onChange' });
 
   const rootRef = useRef(null);
 
