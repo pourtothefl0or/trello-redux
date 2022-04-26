@@ -20,5 +20,10 @@ export const Field = styled.textarea`
   padding: 20px;
   width: 100%;
   min-height: 100px;
+  background-color: ${COLORS.white};
   resize: none;
+
+  &.error {
+    border-color: ${COLORS.red};
+  }
 `;

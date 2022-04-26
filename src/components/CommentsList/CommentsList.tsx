@@ -1,27 +1,41 @@
-import React, { useState } from 'react';
-import { IComment, IUser } from '../../types/interfaces';
-import { CommentFunction } from '../../types/functions';
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useForm } from 'react-hook-form';
+import { actions, selectors } from '../../store/ducks';
 import { Comment } from '../';
 import { Textarea, Button } from '../../ui';
 import { StyledCommentsList, CommentItem, CommentForm } from './styles';
+import { IUser, IComment } from '../../types/interface';
 
-interface CommentsListProps extends CommentFunction {
-  comments: IComment[];
+interface CommentsListProps {
   user: IUser;
   cardId: number;
 }
 
-export const CommentsList: React.FC<CommentsListProps> = ({ comments, user, ...props }) => {
-  const [textareaValue, setTextareaValue] = useState('');
+interface CommentFields {
+  cardDescription: string;
+}
 
-  const handleAddComment: React.FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
+export const CommentsList: React.FC<CommentsListProps> = ({ user, cardId }) => {
+  const comments = useSelector(selectors.comments.filterCommentsByCardId(cardId));
+  const dispatch = useDispatch();
 
-    if (textareaValue) {
-      props.addComment(props.cardId, textareaValue);
-      setTextareaValue('');
-    }
-  }
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm<CommentFields>({ mode: 'onChange' });
+
+  const handleAddComment = handleSubmit((data: CommentFields) => {
+    dispatch(actions.comments.addComment({
+      id: Date.now(),
+      cardId: cardId,
+      userId: user.id,
+      comment: data.cardDescription
+    }));
+    reset();
+  });
 
   return (
     <StyledCommentsList>
@@ -31,8 +45,6 @@ export const CommentsList: React.FC<CommentsListProps> = ({ comments, user, ...p
             <Comment
               name={user.name}
               comment={comment}
-              editComment={props.editComment}
-              deleteComment={() => props.deleteComment(comment.id)}
             />
         </CommentItem>
         )
@@ -40,11 +52,9 @@ export const CommentsList: React.FC<CommentsListProps> = ({ comments, user, ...p
       <CommentItem>
         <CommentForm onSubmit={handleAddComment}>
           <Textarea
-            name="cardDescription"
             placeholder="Add a comment..."
-            value={textareaValue}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setTextareaValue(e.target.value)}
-            required
+            {...register('cardDescription', { required: true, })}
+            className={errors.cardDescription && 'error'}
           />
           <Button>Add</Button>
         </CommentForm>

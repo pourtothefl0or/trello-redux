@@ -5,19 +5,17 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   title?: string;
 }
 
-export const Input: React.FC<InputProps> = (props) => {
+export const Input = React.forwardRef<HTMLInputElement, InputProps>(({ title, ...props }, ref) => {
   return (
     <StyledInput>
       {
-        props.title &&
-          <Title>{props.title}</Title>
+        title &&
+          <Title>{title}</Title>
       }
       <Field
-        type={props.type}
-        name={props.name}
-        minLength={1}
+        ref={ref}
         {...props}
       />
     </StyledInput>
   )
-}
+});

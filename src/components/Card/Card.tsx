@@ -5,9 +5,9 @@ import { StyledCard, CardPopupMore, CardTitle, CardComments } from './styles';
 interface CardProps {
   title: string;
   commentsSum: number;
+  onDeleteClick: () => void;
+  onEditClick: () => void;
   onCardClick: () => void;
-  onEditCardClick: () => void;
-  onDeleteCardClick: () => void;
 }
 
 export const Card: React.FC<CardProps> = ({ title, commentsSum, ...props }) => {
@@ -16,11 +16,11 @@ export const Card: React.FC<CardProps> = ({ title, commentsSum, ...props }) => {
       <CardPopupMore>
         <PopupMoreItem
           className="edit"
-          onClick={props.onEditCardClick}
+          onClick={props.onEditClick}
         >Edit</PopupMoreItem>
         <PopupMoreItem
           className="delete"
-          onClick={props.onDeleteCardClick}
+          onClick={props.onDeleteClick}
         >Delete</PopupMoreItem>
       </CardPopupMore>
       <CardTitle>{title}</CardTitle>

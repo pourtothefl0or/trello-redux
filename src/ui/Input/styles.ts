@@ -20,4 +20,9 @@ export const Field = styled.input`
   padding: 10px 20px;
   width: 100%;
   min-height: 50px;
+  background-color: ${COLORS.white};
+
+  &.error {
+    border-color: ${COLORS.red};
+  }
 `;
