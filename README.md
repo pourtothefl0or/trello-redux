@@ -1,1 +1,1 @@
-# trello-react
+# trello-redux
