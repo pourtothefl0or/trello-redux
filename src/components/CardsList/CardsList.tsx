@@ -1,32 +1,35 @@
 import React from 'react';
-import { ICard, IComment } from '../../types/interfaces';
-import { CardFunctions } from '../../types/functions';
+import { useSelector, useDispatch } from 'react-redux';
+import { actions, selectors } from '../../store/ducks';
 import { Card } from '../';
 import { CardAdd } from '../../ui';
 import { CardsItem } from './styles';
 
-interface CardsListProps extends CardFunctions {
-  cards: ICard[];
-  comments: IComment[];
+interface CardsListProps {
+  columnId: number;
+  onAddCardClick: () => void;
+  onEditCardClick: (cardId: number, columnId: number) => void;
+  onCardClick: (id: number) => void;
 }
 
-export const CardsList: React.FC<CardsListProps> = ({ cards, comments, ...props }) => {
+export const CardsList: React.FC<CardsListProps> = ({ columnId, ...props }) => {
+  const cards = useSelector(selectors.cards.filterCardsByColumnId(columnId));
+  const commentsSum = useSelector(selectors.comments.selectComments).length || 0;
+  const dispatch = useDispatch();
+
+  const onDeleteClick = (id: number) => dispatch(actions.cards.deleteCard({ id: id }))
+
   return (
     <ul>
       {
-        cards.map((card: ICard) =>
+        cards.map(card =>
           <CardsItem key={card.id}>
             <Card
               title={card.title}
-              commentsSum={
-                comments
-                  .filter((comment: IComment) => comment.cardId === card.id)
-                  .length
-                || 0
-              }
+              commentsSum={commentsSum}
+              onDeleteClick={() => onDeleteClick(card.id)}
+              onEditClick={() => props.onEditCardClick(card.id, columnId)}
               onCardClick={() => props.onCardClick(card.id)}
-              onEditCardClick={() => props.onEditCardClick(card.id)}
-              onDeleteCardClick={() => props.onDeleteCardClick(card.id)}
             />
           </CardsItem>
         )

@@ -1,45 +1,66 @@
-import React, { useState } from 'react';
-import { useToggle } from '../../customHooks';
-import { IComment } from '../../types/interfaces';
+import React, { useRef, useState } from 'react';
+import { useOnClickOutside } from '../../customHooks';
+import { useDispatch } from 'react-redux';
+import { useForm } from 'react-hook-form';
+import { actions } from '../../store/ducks';
 import { PopupMoreItem, Button, Input } from '../../ui';
 import { StyledComment, CommentHeader, CommentUserLogo, CommentUserName, CommentPopupMore, CommentsText, CommentForm } from './styles';
+import { IComment } from '../../types/interface';
 
 interface CommentProps {
   name: string | undefined;
   comment: IComment;
-  editComment: (id: number, comment: string) => void;
-  deleteComment: () => void;
 }
 
-export const Comment: React.FC<CommentProps> = ({ name, comment, ...props}) => {
-  const [isEditMode, toggleIsEditMode] = useToggle(false);
-  const [inputValue, setInputValue] = useState('');
+interface CommentFields {
+  commentText: string;
+}
 
-  const handleEditComment: React.FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
+export const Comment: React.FC<CommentProps> = ({ name, comment }) => {
+  const dispatch = useDispatch();
 
-    if (inputValue) props.editComment(comment.id, inputValue);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors }
+  } = useForm<CommentFields>({ mode: 'onChange' });
 
-    toggleIsEditMode();
-    setInputValue('');
-  };
+  const rootRef = useRef(null);
+
+  const [isEditMode, setIsEditMode] = useState(false);
+  useOnClickOutside(rootRef, () => setIsEditMode(false));
+
+  const onEditClick = () => {
+    setValue('commentText', comment.comment);
+    setIsEditMode(!isEditMode);
+  }
+
+  const handleEditComment = handleSubmit((data: CommentFields) => {
+    dispatch(actions.comments.editComment({
+      id: comment.id,
+      comment: data.commentText
+    }))
+    setIsEditMode(!isEditMode);
+    reset();
+  });
+
+  const onDeleteItemClick = (id: number) => dispatch(actions.comments.deleteComment({ id: id }))
 
   return (
-    <StyledComment>
+    <StyledComment ref={rootRef}>
       <CommentHeader>
         <CommentUserLogo>{name?.split('')[0]}</CommentUserLogo>
         <CommentUserName>{name}</CommentUserName>
         <CommentPopupMore>
           <PopupMoreItem
-          className="edit"
-            onClick={() => {
-              setInputValue(comment.comment);
-              toggleIsEditMode();
-            }}
+            className="edit"
+            onClick={onEditClick}
           >Edit</PopupMoreItem>
           <PopupMoreItem
             className="delete"
-            onClick={props.deleteComment}
+            onClick={() => onDeleteItemClick(comment.id)}
           >Delete</PopupMoreItem>
         </CommentPopupMore>
       </CommentHeader>
@@ -49,10 +70,8 @@ export const Comment: React.FC<CommentProps> = ({ name, comment, ...props}) => {
             <CommentForm onSubmit={handleEditComment}>
             <Input
               type="text"
-              name="commentText"
-              value={inputValue}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputValue(e.target.value)}
-              required
+              {...register('commentText', { required: true, })}
+              className={errors.commentText && 'error'}
             />
             <Button type="submit">Edit</Button>
           </CommentForm>

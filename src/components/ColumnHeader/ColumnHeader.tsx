@@ -1,26 +1,44 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useToggle } from '../../customHooks';
-import { ColumnFunctions } from '../../types/functions';
-import { IColumn } from '../../types/interfaces';
+import { useForm } from 'react-hook-form';
+import { useSelector, useDispatch } from 'react-redux';
+import { actions, selectors } from '../../store/ducks';
 import { ButtonClose, PopupMore, PopupMoreItem } from '../../ui';
 import { StyledColumnHeader, TitleInner, Title, CardsSum, ColumnForm, InputTitleLabel, InputTitle } from './styles';
 
-interface ColumnProps extends ColumnFunctions {
-  column: IColumn;
+interface ColumnProps {
+  columnId: number;
   cardsSum: number;
 }
 
-export const ColumnHeader: React.FC<ColumnProps> = ({ column, cardsSum, ...props }) => {
-  const [inputValue, setInputValue] = useState('');
+interface ColumnHeaderFields {
+  columnTitle: string;
+}
+
+export const ColumnHeader: React.FC<ColumnProps> = ({ columnId, cardsSum }) => {
+  const columns = useSelector(selectors.columns.findColumnsById(columnId));
+  const dispatch = useDispatch();
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors }
+  } = useForm<ColumnHeaderFields>({ mode: 'onChange' });
+
   const [isEditMode, toggleIsEditMode] = useToggle(false);
 
-  const handleEditColumn: React.FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-
-    if (inputValue) props.editColumn({ id: column.id, column: inputValue });
-
+  const onEditClick = () => {
+    setValue('columnTitle', columns?.column || '');
     toggleIsEditMode();
-  };
+  }
+
+  const handleEditColumn = handleSubmit((data: ColumnHeaderFields) => {
+    dispatch(actions.columns.editColumn(({ id: columns?.id || 0, column: data.columnTitle })));
+    toggleIsEditMode();
+    reset();
+  });
 
   return (
     <StyledColumnHeader>
@@ -31,10 +49,8 @@ export const ColumnHeader: React.FC<ColumnProps> = ({ column, cardsSum, ...props
             <InputTitleLabel>
               <InputTitle
                 type="text"
-                name="columnTitle"
-                value={inputValue}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputValue(e.target.value)}
-                required
+                {...register('columnTitle', { required: true, })}
+                className={errors.columnTitle && 'error'}
               />
             </InputTitleLabel>
             <ButtonClose type="submit" />
@@ -42,16 +58,13 @@ export const ColumnHeader: React.FC<ColumnProps> = ({ column, cardsSum, ...props
           :
           <>
             <TitleInner>
-              <Title>{column.column}</Title>
+              <Title>{columns?.column}</Title>
             </TitleInner>
             <CardsSum>{cardsSum}</CardsSum>
             <PopupMore>
               <PopupMoreItem
                 className="edit"
-                onClick={() => {
-                  setInputValue(column.column);
-                  toggleIsEditMode()}
-                }
+                onClick={onEditClick}
               >Edit</PopupMoreItem>
             </PopupMore>
           </>

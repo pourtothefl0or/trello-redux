@@ -32,13 +32,9 @@ export const ModalInner = styled.div`
       transform: translateX(0);
     }
   }
-import styled from 'styled-components';
-import { COLORS, PRIMARY } from '../../constants';
-import { Container } from '../../components';
-
 `;
-export
-const StyledModal = styled.div.attrs({
+
+export const StyledModal = styled.div.attrs({
   className: 'modal'
 })`
   height: 100%;
@@ -53,35 +49,23 @@ const StyledModal = styled.div.attrs({
   @media (max-width: 599px) {
     width: 100%;
   }
-import styled from 'styled-components';
-import { COLORS, PRIMARY } from '../../constants';
-import { Container } from '../../components';
-
 `;
-export
-const ModalContainer = styled(Container)`
+
+export const ModalContainer = styled(Container)`
   overflow-y: auto;
   height: 100%;
   padding: 30px;
-import styled from 'styled-components';
-import { COLORS, PRIMARY } from '../../constants';
-import { Container } from '../../components';
-
 `;
-export
-const ModalButtons = styled.div`
+
+export const ModalButtons = styled.div`
   display: flex;
   align-items: center;
   column-gap: 10px;
   justify-content: end;
   margin-bottom: 15px;
-import styled from 'styled-components';
-import { COLORS, PRIMARY } from '../../constants';
-import { Container } from '../../components';
-
 `;
-export
-const ModalTitle = styled.h2`
+
+export const ModalTitle = styled.h2`
   margin: 0 0 40px;
   font-size: 36px;
 `;

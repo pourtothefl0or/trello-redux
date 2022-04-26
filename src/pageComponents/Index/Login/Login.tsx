@@ -1,19 +1,31 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+import { actions } from '../../../store/ducks';
 import { Button, Input } from '../../../ui';
 import { LoginContainer, LoginTitle, LoginForm } from './styles';
 
-interface LoginProps {
-  onAddUser: (name: string) => void;
+interface LoginFields {
+  username: string;
 }
 
-export const Login: React.FC<LoginProps> = ({ onAddUser }) => {
-  const [inputValue, setInputValue] = useState('');
+export const Login: React.FC = () => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm<LoginFields>({ mode: 'onChange' });
 
-  const handleAddUser: React.FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
+  const dispatch = useDispatch();
 
-    if (inputValue) onAddUser(inputValue);
-  }
+  const handleAddUser = handleSubmit((data: LoginFields) => {
+    dispatch(actions.user.addUser({
+      id: Date.now(),
+      name: data.username
+    }));
+    reset();
+  });
 
   return (
     <section>
@@ -22,15 +34,13 @@ export const Login: React.FC<LoginProps> = ({ onAddUser }) => {
         <LoginForm onSubmit={handleAddUser}>
           <Input
             type="text"
-            name="username"
             placeholder="Write your name..."
-            value={inputValue}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputValue(e.target.value)}
-            required
+            {...register('username',{ required: true, })}
+            className={errors.username && 'error'}
           />
           <Button type="submit">Enter</Button>
         </LoginForm>
       </LoginContainer>
     </section>
-  )
-}
+  );
+};

@@ -1,7 +1,7 @@
-import styled from "styled-components";
-import { COLORS, PRIMARY } from "../../../constants";
-import { Container } from "../../../components";
-import { Button } from "../../../ui";
+import styled from 'styled-components';
+import { COLORS, PRIMARY } from '../../../constants';
+import { Container } from '../../../components';
+import { Button } from '../../../ui';
 
 export const StyledBoard = styled.section`
   overflow-x: auto;
