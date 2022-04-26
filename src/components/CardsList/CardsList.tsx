@@ -14,7 +14,7 @@ interface CardsListProps {
 
 export const CardsList: React.FC<CardsListProps> = ({ columnId, ...props }) => {
   const cards = useSelector(selectors.cards.filterCardsByColumnId(columnId));
-  const useFilteredComments = (id: number) => useSelector(selectors.comments.filterCommentsByCardId(id)); // Fix!
+  const commentsSum = useSelector(selectors.comments.selectComments).length || 0;
   const dispatch = useDispatch();
 
   const onDeleteClick = (id: number) => dispatch(actions.cards.deleteCard({ id: id }))
@@ -26,7 +26,7 @@ export const CardsList: React.FC<CardsListProps> = ({ columnId, ...props }) => {
           <CardsItem key={card.id}>
             <Card
               title={card.title}
-              commentsSum={useFilteredComments(card.id).length || 0}
+              commentsSum={commentsSum}
               onDeleteClick={() => onDeleteClick(card.id)}
               onEditClick={() => props.onEditCardClick(card.id, columnId)}
               onCardClick={() => props.onCardClick(card.id)}

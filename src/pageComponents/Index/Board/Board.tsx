@@ -20,9 +20,6 @@ export const Board: React.FC = () => {
   const columns = useSelector(selectors.columns.selectColumns);
   const cards = useSelector(selectors.cards.filterCardsById(currentCardId));
 
-  const useFindCardById = (id: number) => useSelector(selectors.cards.findCardById(id)); // Fix!
-  const useFindColumnById = (id: number) => useSelector(selectors.columns.findColumnsById(id)); // Fix!
-
   const dispatch = useDispatch();
 
   const [isModalAddCard, toggleIsModalAddCard] = useToggle(false);
@@ -62,8 +59,8 @@ export const Board: React.FC = () => {
 
   const onEditCardClick = (id: number) => {
     setCurrentCardId(id);
-    setValueEditCard('cardTitle', useFindCardById(id)?.title || '');
-    setValueEditCard('cardDescription', useFindCardById(id)?.description || '');
+    setValueEditCard('cardTitle', cards.find(el => el.id === id)?.title || '');
+    setValueEditCard('cardDescription', cards.find(el => el.id === id)?.description || '');
     toggleIsModalEditCard();
   }
 
@@ -153,7 +150,7 @@ export const Board: React.FC = () => {
               <CardInfo>
                 <CardInfoItem>
                   <CardInfoTitle>Column:</CardInfoTitle>
-                  <h3>{useFindColumnById(card.columnId)?.column || ''}</h3>
+                  <h3>{columns.find(el => el.id === card.columnId)?.column || ''}</h3>
                 </CardInfoItem>
                 <CardInfoItem>
                   <CardInfoTitle>Title:</CardInfoTitle>
