@@ -63,7 +63,6 @@ export const CardInfoAuthor = styled.p`
   color: ${COLORS.black};
 `;
 
-
 export const CardForm = styled.form`
   display: flex;
   flex-direction: column;

@@ -5,10 +5,8 @@ import { actions, selectors } from '../../store/ducks';
 import { Comment } from '../';
 import { Textarea, Button } from '../../ui';
 import { StyledCommentsList, CommentItem, CommentForm } from './styles';
-import { IUser, IComment } from '../../types/interface';
 
 interface CommentsListProps {
-  user: IUser;
   cardId: number;
 }
 
@@ -16,7 +14,8 @@ interface CommentFields {
   cardDescription: string;
 }
 
-export const CommentsList: React.FC<CommentsListProps> = ({ user, cardId }) => {
+export const CommentsList: React.FC<CommentsListProps> = ({ cardId }) => {
+  const user = useSelector(selectors.user.selectUser);
   const comments = useSelector(selectors.comments.filterCommentsByCardId(cardId));
   const dispatch = useDispatch();
 
@@ -24,7 +23,7 @@ export const CommentsList: React.FC<CommentsListProps> = ({ user, cardId }) => {
     register,
     handleSubmit,
     reset,
-    formState: { errors }
+    formState: { errors, isValid }
   } = useForm<CommentFields>({ mode: 'onChange' });
 
   const handleAddComment = handleSubmit((data: CommentFields) => {
@@ -40,7 +39,7 @@ export const CommentsList: React.FC<CommentsListProps> = ({ user, cardId }) => {
   return (
     <StyledCommentsList>
       {
-        comments.map((comment: IComment) =>
+        comments.map(comment =>
           <CommentItem key={comment.id}>
             <Comment
               name={user.name}
@@ -56,7 +55,10 @@ export const CommentsList: React.FC<CommentsListProps> = ({ user, cardId }) => {
             {...register('cardDescription', { required: true, })}
             className={errors.cardDescription && 'error'}
           />
-          <Button>Add</Button>
+          <Button
+            type="submit"
+            disabled={!isValid}
+          >Add</Button>
         </CommentForm>
       </CommentItem>
     </StyledCommentsList>

@@ -1,0 +1,1 @@
+export { ModalEditCard } from './ModalEditCard';

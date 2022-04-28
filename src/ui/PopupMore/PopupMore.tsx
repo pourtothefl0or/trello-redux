@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { useOnClickOutside } from '../../customHooks';
+import { useOnClickOutside } from '../../hooks';
 import { PopupMoreInner, CardMore, Settings } from './styles';
 import iconMore from '../../assets/images/icons/more.svg';
 

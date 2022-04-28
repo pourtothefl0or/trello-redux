@@ -1,4 +1,7 @@
-import { IUser } from '../../types/interface';
+export interface IUser {
+  id: number;
+  name: string;
+}
 
 export interface InitialState {
   user: IUser;

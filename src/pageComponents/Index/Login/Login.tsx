@@ -14,7 +14,7 @@ export const Login: React.FC = () => {
     register,
     handleSubmit,
     reset,
-    formState: { errors }
+    formState: { errors, isValid },
   } = useForm<LoginFields>({ mode: 'onChange' });
 
   const dispatch = useDispatch();
@@ -38,7 +38,10 @@ export const Login: React.FC = () => {
             {...register('username',{ required: true, })}
             className={errors.username && 'error'}
           />
-          <Button type="submit">Enter</Button>
+          <Button
+            type="submit"
+            disabled={!isValid}
+          >Enter</Button>
         </LoginForm>
       </LoginContainer>
     </section>

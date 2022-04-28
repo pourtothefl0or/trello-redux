@@ -1,0 +1,1 @@
+export { ModalAddCard } from './ModalAddCard';

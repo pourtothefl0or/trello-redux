@@ -1,5 +1,5 @@
 import React from 'react';
-import { useToggle } from '../../customHooks';
+import { useToggle } from '../../hooks';
 import { useForm } from 'react-hook-form';
 import { useSelector, useDispatch } from 'react-redux';
 import { actions, selectors } from '../../store/ducks';
@@ -24,18 +24,27 @@ export const ColumnHeader: React.FC<ColumnProps> = ({ columnId, cardsSum }) => {
     handleSubmit,
     reset,
     setValue,
-    formState: { errors }
+    formState: { errors, isValid }
   } = useForm<ColumnHeaderFields>({ mode: 'onChange' });
 
   const [isEditMode, toggleIsEditMode] = useToggle(false);
 
   const onEditClick = () => {
-    setValue('columnTitle', columns?.column || '');
+    if (columns) {
+      setValue('columnTitle', columns.column);
+    }
+
     toggleIsEditMode();
   }
 
   const handleEditColumn = handleSubmit((data: ColumnHeaderFields) => {
-    dispatch(actions.columns.editColumn(({ id: columns?.id || 0, column: data.columnTitle })));
+    if (columns) {
+      dispatch(actions.columns.editColumn(({
+        id: columns.id,
+        column: data.columnTitle
+      })));
+    }
+
     toggleIsEditMode();
     reset();
   });
@@ -53,7 +62,10 @@ export const ColumnHeader: React.FC<ColumnProps> = ({ columnId, cardsSum }) => {
                 className={errors.columnTitle && 'error'}
               />
             </InputTitleLabel>
-            <ButtonClose type="submit" />
+            <ButtonClose
+              type="submit"
+              disabled={!isValid}
+            />
           </ColumnForm>
           :
           <>
