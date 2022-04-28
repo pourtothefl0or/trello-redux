@@ -35,6 +35,7 @@ export const ModalEditCard: React.FC<ModalAddCardProps> = ({ cardId, isModal, to
       setValue('cardTitle', card.title);
       setValue('cardDescription', card.description);
     }
+    // eslint-disable-next-line
   }, [isModal]);
 
   const handleEditCard = handleSubmit((data: BoardFields) => {
