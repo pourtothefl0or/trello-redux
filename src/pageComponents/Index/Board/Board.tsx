@@ -1,16 +1,10 @@
 import React, { useState } from 'react';
-import { useToggle } from '../../../customHooks';
-import { useForm } from 'react-hook-form';
-import { useDispatch, useSelector } from 'react-redux';
-import { actions, selectors } from '../../../store/ducks';
-import { Column, CommentsList } from '../../../components';
-import { Input, Modal, Textarea } from '../../../ui';
-import { StyledBoard, BoardContainer, CardInfo, CardInfoTitle, CardForm, CardFormButton, CardInfoItem } from './styles';
-
-interface BoardFields {
-  cardTitle: string;
-  cardDescription: string;
-}
+import { useToggle } from '../../../hooks';
+import { useSelector } from 'react-redux';
+import { selectors } from '../../../store/ducks';
+import { Column, CommentsList, ModalAddCard, ModalEditCard } from '../../../components';
+import { Modal } from '../../../ui';
+import { StyledBoard, BoardContainer, CardInfo, CardInfoTitle, CardInfoItem } from './styles';
 
 export const Board: React.FC = () => {
   const [currentCardId, setCurrentCardId] = useState(0);
@@ -20,59 +14,19 @@ export const Board: React.FC = () => {
   const columns = useSelector(selectors.columns.selectColumns);
   const cards = useSelector(selectors.cards.filterCardsById(currentCardId));
 
-  const dispatch = useDispatch();
-
   const [isModalAddCard, toggleIsModalAddCard] = useToggle(false);
-  const [isModalInfoCard, toggleIsModalInfoCard] = useToggle(false);
   const [isModalEditCard, toggleIsModalEditCard] = useToggle(false);
-
-  const {
-    register: registerAddCard,
-    handleSubmit: handleSubmitAddCard,
-    reset: resetAddCard,
-    formState: { errors: errorsAddCard }
-  } = useForm<BoardFields>({ mode: 'onChange' });
-
-  const {
-    register: registerEditCard,
-    handleSubmit: handleSubmitEditCard,
-    reset: resetEditCard,
-    setValue: setValueEditCard,
-    formState: { errors: errorsEditCard }
-  } = useForm<BoardFields>({ mode: 'onChange' });
+  const [isModalInfoCard, toggleIsModalInfoCard] = useToggle(false);
 
   const onAddCardClick = (id: number) => {
     setCurrentColumnId(id);
     toggleIsModalAddCard();
   }
 
-  const handleAddCard = handleSubmitAddCard((data: BoardFields) => {
-    dispatch(actions.cards.addCard({
-      id: Date.now(),
-      columnId: currentColumnId,
-      title: data.cardTitle,
-      description: data.cardDescription
-    }));
-    toggleIsModalAddCard();
-    resetAddCard();
-  });
-
   const onEditCardClick = (id: number) => {
     setCurrentCardId(id);
-    setValueEditCard('cardTitle', cards.find(el => el.id === id)?.title || '');
-    setValueEditCard('cardDescription', cards.find(el => el.id === id)?.description || '');
     toggleIsModalEditCard();
   }
-
-  const handleEditCard = handleSubmitEditCard((data: BoardFields) => {
-    dispatch(actions.cards.editCard({
-      id: currentCardId,
-      title: data.cardTitle,
-      description: data.cardDescription
-    }))
-    toggleIsModalEditCard();
-    resetEditCard();
-  });
 
   const onCardClick = (id: number) => {
     setCurrentCardId(id);
@@ -97,47 +51,17 @@ export const Board: React.FC = () => {
         </BoardContainer>
       </StyledBoard>
 
-      <Modal
-        title="Add card"
-        modalVisibility={isModalAddCard}
-        onCloseClick={() => toggleIsModalAddCard()}
-      >
-        <CardForm onSubmit={handleAddCard}>
-          <Input
-            title="Title"
-            type="text"
-            {...registerAddCard('cardTitle', { required: true, })}
-            className={errorsAddCard.cardTitle && 'error'}
-          />
-          <Textarea
-            title="Description"
-            {...registerAddCard('cardDescription')}
-            className={errorsAddCard.cardDescription && 'error'}
-          />
-          <CardFormButton type="submit">Add</CardFormButton>
-        </CardForm>
-      </Modal>
+      <ModalAddCard
+        columnId={currentColumnId}
+        isModal={isModalAddCard}
+        toggleModal={toggleIsModalAddCard}
+      />
 
-      <Modal
-        title="Edit card"
-        modalVisibility={isModalEditCard}
-        onCloseClick={() => toggleIsModalEditCard()}
-      >
-        <CardForm onSubmit={handleEditCard}>
-          <Input
-            title="Title"
-            type="text"
-            {...registerEditCard('cardTitle', { required: true, })}
-            className={errorsEditCard.cardTitle && 'error'}
-          />
-          <Textarea
-            title="Description"
-            {...registerEditCard('cardDescription')}
-            className={errorsEditCard.cardDescription && 'error'}
-          />
-          <CardFormButton type="submit">Edit</CardFormButton>
-        </CardForm>
-      </Modal>
+      <ModalEditCard
+        cardId={currentCardId}
+        isModal={isModalEditCard}
+        toggleModal={toggleIsModalEditCard}
+      />
 
       <Modal
         title="Card info"
@@ -165,10 +89,7 @@ export const Board: React.FC = () => {
                   <p>{user.name}</p>
                 </CardInfoItem>
               </CardInfo>
-              <CommentsList
-                user={user}
-                cardId={card.id}
-              />
+              <CommentsList cardId={card.id} />
             </div>
           )
         }

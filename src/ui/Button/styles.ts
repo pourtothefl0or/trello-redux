@@ -9,4 +9,8 @@ export const StyledButton = styled.button`
   font-size: 16px;
   color: ${COLORS.white};
   background-color: ${COLORS.cornflowerBlue};
+
+  &:disabled {
+    background-color: ${COLORS.midGray};
+  }
 `;

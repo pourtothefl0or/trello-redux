@@ -5,3 +5,5 @@ export { CardsList } from './CardsList';
 export { Card } from './Card';
 export { CommentsList } from './CommentsList';
 export { Comment } from './Comment';
+export { ModalAddCard } from './ModalAddCard';
+export { ModalEditCard } from './ModalEditCard';

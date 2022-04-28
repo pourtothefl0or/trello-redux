@@ -1,14 +1,14 @@
 import React, { useRef, useState } from 'react';
-import { useOnClickOutside } from '../../customHooks';
+import { useOnClickOutside } from '../../hooks';
 import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { actions } from '../../store/ducks';
 import { PopupMoreItem, Button, Input } from '../../ui';
 import { StyledComment, CommentHeader, CommentUserLogo, CommentUserName, CommentPopupMore, CommentsText, CommentForm } from './styles';
-import { IComment } from '../../types/interface';
+import { IComment } from '../../store/comments/types';
 
 interface CommentProps {
-  name: string | undefined;
+  name: string;
   comment: IComment;
 }
 
@@ -24,7 +24,7 @@ export const Comment: React.FC<CommentProps> = ({ name, comment }) => {
     handleSubmit,
     reset,
     setValue,
-    formState: { errors }
+    formState: { errors, isValid }
   } = useForm<CommentFields>({ mode: 'onChange' });
 
   const rootRef = useRef(null);
@@ -51,7 +51,7 @@ export const Comment: React.FC<CommentProps> = ({ name, comment }) => {
   return (
     <StyledComment ref={rootRef}>
       <CommentHeader>
-        <CommentUserLogo>{name?.split('')[0]}</CommentUserLogo>
+        <CommentUserLogo>{name.split('')[0]}</CommentUserLogo>
         <CommentUserName>{name}</CommentUserName>
         <CommentPopupMore>
           <PopupMoreItem
@@ -73,7 +73,10 @@ export const Comment: React.FC<CommentProps> = ({ name, comment }) => {
               {...register('commentText', { required: true, })}
               className={errors.commentText && 'error'}
             />
-            <Button type="submit">Edit</Button>
+            <Button
+              type="submit"
+              disabled={!isValid}
+            >Edit</Button>
           </CommentForm>
           :
           <CommentsText>{comment.comment}</CommentsText>
